@@ -6,9 +6,11 @@
 //
 
 import Foundation
+import CoreData
 
 protocol UserOnboardingViewModelProtocol {
     func createUser(userModel: CreateUserModel, completion: @escaping (Bool) -> Void)
+    func saveDataCoreData(userModel: CreateUserModel, completion: @escaping (Bool) -> Void)
     func navigateToHome()
 }
 
@@ -58,6 +60,27 @@ class UserOnboardingViewModel: UserOnboardingViewModelProtocol {
                 completion(true)
             }
         }.resume()
+    }
+    
+    func saveDataCoreData(userModel: CreateUserModel, completion: @escaping (Bool) -> Void) {
+        let entity = NSEntityDescription.entity(forEntityName: "Profile", in: CoreDataManager.shared.managedObjectContext)!
+        let objeto = NSManagedObject(entity: entity, insertInto: CoreDataManager.shared.managedObjectContext)
+        
+        // Configurar os atributos do objeto
+        objeto.setValue(UUID(), forKeyPath: "id")
+        objeto.setValue(userModel.name, forKeyPath: "name")
+        objeto.setValue(userModel.barbershop, forKeyPath: "barbershop")
+        objeto.setValue(userModel.city, forKeyPath: "city")
+        objeto.setValue(userModel.state, forKeyPath: "state")
+        objeto.setValue(userModel.email, forKeyPath: "email")
+        
+        do {
+            try CoreDataManager.shared.managedObjectContext.save()
+            completion(true)
+        } catch let error as NSError {
+            print("Erro ao adicionar Produto: \(error), \(error.userInfo)")
+            completion(false)
+        }
     }
     
     // MARK: - Routes

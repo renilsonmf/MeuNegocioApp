@@ -39,22 +39,21 @@ class UserOnboardingViewController: CoordinatedViewController {
 extension UserOnboardingViewController: CreateUserOnboardingProtocol {
     func addUserOnboarding(model: CreateUserModel) {
         customView.continueButton.loadingIndicator(show: true)
-        viewModel.createUser(
-            userModel: CreateUserModel(
-                name: model.name,
-                barbershop: model.barbershop,
-                city: model.city,
-                state: model.state,
-                email: model.email)) { [weak self] onSuccess in
-                    if onSuccess {
-                        self?.viewModel.navigateToHome()
-                        guard let email = Auth.auth().currentUser?.email else { return }
-                        MNUserDefaults.set(value: true, forKey: email)
-                    } else {
-                        self?.showAlert(title: "Ocorreu um erro", messsage: "Tente novamente.")
-                    }
-                    self?.customView.continueButton.loadingIndicator(show: true)
+        viewModel.saveDataCoreData(userModel: CreateUserModel(
+            name: model.name,
+            barbershop: model.barbershop,
+            city: model.city,
+            state: model.state,
+            email: model.email)) { [weak self] onSuccess in
+                if onSuccess {
+                    self?.viewModel.navigateToHome()
+                    let email = Auth.auth().currentUser?.email ?? ""
+                    MNUserDefaults.set(value: true, forKey: email)
+                } else {
+                    self?.showAlert(title: "Ocorreu um erro", messsage: "Tente novamente.")
                 }
+                self?.customView.continueButton.loadingIndicator(show: true)
+            }
     }
     
     func alertEmptyField() {
