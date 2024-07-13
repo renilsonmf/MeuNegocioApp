@@ -11,14 +11,12 @@ final class HomeViewController: CoordinatedViewController {
     
     // MARK: - Properties
     private let viewModel: HomeViewModelProtocol
-    private var procedures: [GetProcedureModel] = []
-    private var userData: UserModelList = []
 
     // MARK: - View
     private lazy var customView = HomeView(
-        navigateToReport: weakify { $0.viewModel.navigateToReport(procedures: $0.procedures)},
+        navigateToReport: weakify { $0.viewModel.navigateToReport(procedures: $0.viewModel.listProcedures())},
         alertAction: weakify { $0.showAlert()},
-        navigateToProfile: weakify { $0.viewModel.navigateToProfile($0.userData) },
+        navigateToProfile: weakify { $0.viewModel.navigateToProfile($0.viewModel.userDataCoreData()) },
         navigateToAddProcedure: weakify { $0.viewModel.navigateToAddProcedure() },
         navigateToHelp: weakify { $0.viewModel.navigateToHelp() },
         openProcedureDetails: weakify { $0.viewModel.openProcedureDetails($1) },
@@ -57,23 +55,16 @@ final class HomeViewController: CoordinatedViewController {
     }
 
     private func bindProperties() {
-        viewModel.input.viewDidLoad()
-        viewModel.output.procedures.bind() { [weak self] result in
-            self?.customView.procedures = result.reversed()
-            self?.procedures = result.reversed()
-            self?.customView.totalReceiptCard.setupCardValues(
-                totalValues: self?.viewModel.input.makeTotalAmounts(result),
-                procedureValue: "\(result.count)")
-            self?.customView.totalReceiptCard.loadingIndicatorView(show: false)
-            self?.openRateApp()
+        DispatchQueue.main.async {
+            self.customView.procedures = self.viewModel.listProcedures().reversed()
+            self.customView.totalReceiptCard.setupCardValues(
+                totalValues: self.viewModel.makeTotalAmounts(self.viewModel.listProcedures()),
+                procedureValue: "\(self.viewModel.listProcedures().count)"
+            )
+            self.customView.totalReceiptCard.loadingIndicatorView(show: false)
+            self.customView.userName = self.viewModel.userDataCoreData().first?.name ?? ""
+            self.reloadData()
         }
-        
-        viewModel.output.userData.bind { [weak self] result in
-            self?.userData = result
-            self?.customView.userName = result.first?.name ?? ""
-        }
-        
-        reloadData()
     }
 
     private func didPullToRefresh() {
@@ -115,29 +106,29 @@ final class HomeViewController: CoordinatedViewController {
         switch type {
         case .all:
             TrackEvent.track(event: .homeFilterAll)
-            self.customView.procedures = procedures
+            self.customView.procedures = viewModel.listProcedures()
         case .today:
             TrackEvent.track(event: .homeFilterToday)
-            self.customView.procedures = todayProcedures(procedures: procedures)
+            self.customView.procedures = todayProcedures(procedures: viewModel.listProcedures())
         case .sevenDays:
             TrackEvent.track(event: .homeFilterSevenDays)
-            self.customView.procedures = filteredProcedures(procedures: procedures, lastDays: 7)
+            self.customView.procedures = filteredProcedures(procedures: viewModel.listProcedures(), lastDays: 7)
         case .thirtyDays:
             TrackEvent.track(event: .homeFilterThisMonth)
-            self.customView.procedures = filteredProcedures(procedures: procedures, isMonthly: true)
+            self.customView.procedures = filteredProcedures(procedures: viewModel.listProcedures(), isMonthly: true)
         case .custom: print("custom")
         }
     }
 
     private func openRateApp() {
         let value = MNUserDefaults.get(boolForKey: MNKeys.rateApp) ?? false
-        if value.not && procedures.count > 0 {
+        if value.not && viewModel.listProcedures().count > 0 {
             self.viewModel.navigateToRateApp()
         }
     }
 
     private func didSelectFilterDatePicker(_ date: String) {
-        let proceduresFiltered = procedures.filter { $0.currentDate == date }
+        let proceduresFiltered = viewModel.listProcedures().filter { $0.currentDate == date }
         self.customView.procedures = proceduresFiltered
         self.customView.tableview.reloadData()
     }
