@@ -209,7 +209,7 @@ class AddProcedureView: MNView {
         } else if checkValueCosts(){
             delegateActions?.alertForTextField(message: "O custo não pode ser maior que o valor do procedimento")
         } else {
-            guard let email = Auth.auth().currentUser?.email else { return }
+            let email = Auth.auth().currentUser?.email ?? ""
             let amountValue = valueTextField.text?
                 .replacingOccurrences(of: "R$", with: "")
                 .dropFirst()

@@ -6,9 +6,11 @@
 //
 
 import UIKit
+import CoreData
 
 protocol AddProcedureViewModelProtocol {
     func createProcedure(procedure: CreateProcedureModel, completion: @escaping (Bool) -> Void)
+    func createProcedureCoreData(procedure: CreateProcedureModel, completion: @escaping (Bool) -> Void)
     func closed()
 }
 
@@ -64,5 +66,31 @@ class AddProcedureViewModel: AddProcedureViewModelProtocol {
                 completion(true)
             }
         }.resume()
+    }
+    
+    func createProcedureCoreData(procedure: CreateProcedureModel, completion: @escaping (Bool) -> Void) {
+        let entity = NSEntityDescription.entity(forEntityName: "AddProduct", in: CoreDataManager.shared.managedObjectContext)!
+        let objeto = NSManagedObject(entity: entity, insertInto: CoreDataManager.shared.managedObjectContext)
+        
+        // Configurar os atributos do objeto
+        objeto.setValue(UUID(), forKeyPath: "id")
+        objeto.setValue(procedure.value, forKeyPath: "value")
+        objeto.setValue(procedure.nameClient, forKeyPath: "nameClient")
+        objeto.setValue(procedure.formPayment, forKeyPath: "formPayment")
+        objeto.setValue(procedure.email, forKeyPath: "email")
+        objeto.setValue(procedure.typeProcedure, forKeyPath: "typeProcedure")
+        objeto.setValue(procedure.currentDate, forKeyPath: "currentDate")
+        objeto.setValue(procedure.costs, forKeyPath: "costs")
+        
+        
+        // Salvar o contexto
+        do {
+            try CoreDataManager.shared.managedObjectContext.save()
+            print("Produto adicionado com sucesso!")
+            completion(true)
+        } catch let error as NSError {
+            print("Erro ao adicionar Produto: \(error), \(error.userInfo)")
+            completion(false)
+        }
     }
 }
