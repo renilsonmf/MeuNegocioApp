@@ -26,4 +26,10 @@ class StartCoordinator: BaseCoordinator {
         coordinator.start()
         configuration.navigationController?.removeViewController(StartViewController.self)
     }
+    
+    func navigateToOnboarding() {
+        let coordinator = UserOnboardingCoordinator(with: configuration)
+        coordinator.start()
+        configuration.navigationController?.removeViewController(StartViewController.self)
+    }
 }

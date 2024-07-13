@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseAuth
+import CoreData
 
 protocol StartViewModelProtocol {
     func validate()
@@ -28,11 +29,13 @@ class StartViewModel: StartViewModelProtocol {
     }
     
     func validate() {
-        if checkPassedTheOnboarding() {
-            autoLogin()
-        } else {
-            self.coordinator?.navigateToLogin()
-        }
+       // if checkPassedTheOnboarding() {
+       //     autoLogin()
+       // } else {
+       //     self.coordinator?.navigateToLogin()
+       // }
+        
+        userDataCoreData().isEmpty ? self.coordinator?.navigateToOnboarding() : self.coordinator?.navigateToHome()
     }
     
     func autoLogin() {
@@ -51,6 +54,32 @@ class StartViewModel: StartViewModelProtocol {
             }
         } else {
             self.coordinator?.navigateToLogin()
+        }
+    }
+    
+    func userDataCoreData() -> UserModelList {
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Profile")
+
+        do {
+            let users = try CoreDataManager.shared.managedObjectContext.fetch(request) as! [NSManagedObject]
+
+            // Mapear todos os objetos para UserModel
+            let userList: UserModelList = users.map { user in
+                return UserModel(
+                    id: user.value(forKey: "id") as? String ?? "",
+                    name: user.value(forKey: "name") as? String ?? "",
+                    barbershop: user.value(forKey: "barbershop") as? String ?? "",
+                    city: user.value(forKey: "city") as? String ?? "",
+                    state: user.value(forKey: "state") as? String ?? "",
+                    email: user.value(forKey: "email") as? String ?? "",
+                    v: 0
+                )
+            }
+
+            return userList
+        } catch let error {
+            print("Erro ao recuperar dados do usuário: \(error.localizedDescription)")
+            return []
         }
     }
 }

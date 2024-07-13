@@ -26,17 +26,11 @@ class StartViewController: CoordinatedViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         showAnimation()
-        saveRemoteConfigFirebase()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         viewModel.validate()
-    }
-    
-    private func saveRemoteConfigFirebase() {
-        let urlEndpoints = RemoteConfigManager.shared.getObject(ListKeysRemoteConfig.self, forKey: .urlEndpoints).self
-        MNUserDefaults.setRemoteConfig(model: urlEndpoints)
     }
     
     private func showAnimation() {
