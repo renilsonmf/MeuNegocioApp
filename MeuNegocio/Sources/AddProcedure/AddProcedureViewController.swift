@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import CoreData
 
 class AddProcedureViewController: CoordinatedViewController {
     
@@ -47,27 +46,28 @@ extension AddProcedureViewController: AddProcedureActionsProtocol {
     
     func addProcedure(nameClient: String, typeProcedure: String, formPayment: String, value: String, email: String, costs: String) {
         customView.addButton.loadingIndicator(show: true)
-        viewModel.createProcedureCoreData(procedure: CreateProcedureModel(
-            nameClient: nameClient,
-            typeProcedure: typeProcedure,
-            formPayment: formPayment,
-            value: value,
-            currentDate: .currentDateSystem,
-            email: email,
-            costs: costs)) { [ weak self ] result in
-                guard let self = self else {return}
-                if result {
-                    self.customView.addButton.loadingIndicator(show: false)
-                    self.showAlert(title: String.stringEmpty, messsage: "Adicionado com sucesso!") {
-                        self.viewModel.closed()
-                    }
-                } else {
-                    DispatchQueue.main.async {
-                        self.showAlert(title: "Ocorreu um erro", messsage: "Tente novamente mais tarde")
+        viewModel.createProcedureCoreData(
+            procedure: CreateProcedureModel(
+                nameClient: nameClient,
+                typeProcedure: typeProcedure,
+                formPayment: formPayment,
+                value: value,
+                currentDate: .currentDateSystem,
+                email: email,
+                costs: costs)) { [ weak self ] result in
+                    guard let self = self else {return}
+                    if result {
                         self.customView.addButton.loadingIndicator(show: false)
+                        self.showAlert(title: String.stringEmpty, messsage: "Adicionado com sucesso!") {
+                            self.viewModel.closed()
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            self.showAlert(title: "Ocorreu um erro", messsage: "Tente novamente mais tarde")
+                            self.customView.addButton.loadingIndicator(show: false)
+                        }
                     }
                 }
-            }
     }
 
     func alertForTextField(message: String) {

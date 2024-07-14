@@ -31,10 +31,7 @@ class AddProcedureViewModel: AddProcedureViewModelProtocol {
 
     // MARK: - Methods
     func createProcedure(procedure: CreateProcedureModel, completion: @escaping (Bool) -> Void) {
-        
-        let createProcedure = MNUserDefaults.getRemoteConfig()?.addProcedure ?? "http://54.86.122.10:3000/procedure"
-        
-        guard let url = URL(string: createProcedure) else {
+        guard let url = URL(string: "http://54.86.122.10:3000/procedure") else {
             print("Error: cannot create URL")
             return
         }
@@ -86,7 +83,6 @@ class AddProcedureViewModel: AddProcedureViewModelProtocol {
         // Salvar o contexto
         do {
             try CoreDataManager.shared.managedObjectContext.save()
-            print("Produto adicionado com sucesso!")
             completion(true)
         } catch let error as NSError {
             print("Erro ao adicionar Produto: \(error), \(error.userInfo)")
