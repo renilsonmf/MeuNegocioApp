@@ -127,22 +127,25 @@ extension ProcedureDetailService {
         do {
             let objects = try context.fetch(fetchRequest)
             
-            if let object = objects.first as? NSManagedObject {
-                object.setValue(procedure.nameClient, forKey: "nameClient")
-                object.setValue(procedure.typeProcedure, forKey: "typeProcedure")
-                object.setValue(procedure.formPayment.rawValue, forKey: "formPayment")
-                object.setValue(procedure.value, forKey: "value")
-                object.setValue(procedure.costs.orEmpty, forKey: "costs")
-                
-                try context.save()
-                
-                let updatedModel = UpdatedProceduresModel(nameClient: procedure.nameClient,
-                                                          typeProcedure: procedure.typeProcedure,
-                                                          formPayment: procedure.formPayment.rawValue,
-                                                          value: procedure.value,
-                                                          costs: procedure.costs.orEmpty)
-                completion(updatedModel, true)
+            guard let object = objects.first as? NSManagedObject else {
+                completion(UpdatedProceduresModel(), false)
+                return
             }
+            
+            object.setValue(procedure.nameClient, forKey: "nameClient")
+            object.setValue(procedure.typeProcedure, forKey: "typeProcedure")
+            object.setValue(procedure.formPayment.rawValue, forKey: "formPayment")
+            object.setValue(procedure.value, forKey: "value")
+            object.setValue(procedure.costs.orEmpty, forKey: "costs")
+            
+            try context.save()
+            
+            let updatedModel = UpdatedProceduresModel(nameClient: procedure.nameClient,
+                                                      typeProcedure: procedure.typeProcedure,
+                                                      formPayment: procedure.formPayment.rawValue,
+                                                      value: procedure.value,
+                                                      costs: procedure.costs.orEmpty)
+            completion(updatedModel, true)
         } catch {
             completion(UpdatedProceduresModel(), false)
         }
