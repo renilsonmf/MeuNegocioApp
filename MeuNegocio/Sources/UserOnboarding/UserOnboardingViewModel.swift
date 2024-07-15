@@ -67,7 +67,7 @@ class UserOnboardingViewModel: UserOnboardingViewModelProtocol {
         let objeto = NSManagedObject(entity: entity, insertInto: CoreDataManager.shared.managedObjectContext)
         
         // Configurar os atributos do objeto
-        objeto.setValue(UUID(), forKeyPath: "id")
+        objeto.setValue(UUID().uuidString, forKeyPath: "id")
         objeto.setValue(userModel.name, forKeyPath: "name")
         objeto.setValue(userModel.barbershop, forKeyPath: "barbershop")
         objeto.setValue(userModel.city, forKeyPath: "city")
