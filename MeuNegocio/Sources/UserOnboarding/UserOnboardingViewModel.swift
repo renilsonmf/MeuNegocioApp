@@ -63,10 +63,12 @@ class UserOnboardingViewModel: UserOnboardingViewModelProtocol {
     }
     
     func saveDataCoreData(userModel: CreateUserModel, completion: @escaping (Bool) -> Void) {
-        let entity = NSEntityDescription.entity(forEntityName: "Profile", in: CoreDataManager.shared.managedObjectContext)!
+        guard let entity = NSEntityDescription.entity(forEntityName: "Profile", in: CoreDataManager.shared.managedObjectContext) else {
+            return
+        }
+        
         let objeto = NSManagedObject(entity: entity, insertInto: CoreDataManager.shared.managedObjectContext)
         
-        // Configurar os atributos do objeto
         objeto.setValue(UUID().uuidString, forKeyPath: "id")
         objeto.setValue(userModel.name, forKeyPath: "name")
         objeto.setValue(userModel.barbershop, forKeyPath: "barbershop")
@@ -77,8 +79,7 @@ class UserOnboardingViewModel: UserOnboardingViewModelProtocol {
         do {
             try CoreDataManager.shared.managedObjectContext.save()
             completion(true)
-        } catch let error as NSError {
-            print("Erro ao adicionar Produto: \(error), \(error.userInfo)")
+        } catch {
             completion(false)
         }
     }

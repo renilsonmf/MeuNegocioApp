@@ -66,10 +66,12 @@ class AddProcedureViewModel: AddProcedureViewModelProtocol {
     }
     
     func createProcedureCoreData(procedure: CreateProcedureModel, completion: @escaping (Bool) -> Void) {
-        let entity = NSEntityDescription.entity(forEntityName: "AddProduct", in: CoreDataManager.shared.managedObjectContext)!
+        guard let entity = NSEntityDescription.entity(forEntityName: "AddProduct", in: CoreDataManager.shared.managedObjectContext) else {
+            return
+        }
+        
         let objeto = NSManagedObject(entity: entity, insertInto: CoreDataManager.shared.managedObjectContext)
         
-        // Configurar os atributos do objeto
         objeto.setValue(UUID().uuidString, forKeyPath: "id")
         objeto.setValue(procedure.value, forKeyPath: "value")
         objeto.setValue(procedure.nameClient, forKeyPath: "nameClient")
@@ -79,13 +81,10 @@ class AddProcedureViewModel: AddProcedureViewModelProtocol {
         objeto.setValue(procedure.currentDate, forKeyPath: "currentDate")
         objeto.setValue(procedure.costs, forKeyPath: "costs")
         
-        
-        // Salvar o contexto
         do {
             try CoreDataManager.shared.managedObjectContext.save()
             completion(true)
-        } catch let error as NSError {
-            print("Erro ao adicionar Produto: \(error), \(error.userInfo)")
+        } catch {
             completion(false)
         }
     }
