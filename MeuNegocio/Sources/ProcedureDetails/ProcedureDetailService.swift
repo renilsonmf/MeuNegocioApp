@@ -94,7 +94,7 @@ class ProcedureDetailService: ProcedureDetailServiceProtocol {
 // MARK: Metodos que remove o procedimento do CoreData
 extension ProcedureDetailService {
     func deleteProcedureCoreData(_ procedure: String, completion: @escaping (String) -> Void) {
-        let fetchRequest: NSFetchRequest<AddProduct> = AddProduct.fetchRequest()
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "AddProduct")
         fetchRequest.predicate = NSPredicate(format: "id == %@", procedure)
 
         let context = CoreDataManager.shared.managedObjectContext
@@ -103,7 +103,12 @@ extension ProcedureDetailService {
             let objects = try context.fetch(fetchRequest)
             
             for object in objects {
-                context.delete(object)
+                guard let managedObject = object as? NSManagedObject else {
+                    completion("Ocorreu um erro ao tentar deletar o procedimento!")
+                    continue
+                }
+                
+                context.delete(managedObject)
             }
             
             try context.save()
