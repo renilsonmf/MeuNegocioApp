@@ -29,13 +29,13 @@ class ProcedureDetailViewModel: ProcedureDetailViewModelProtocol {
     }
 
     internal func deleteProcedure(_ procedure: String, completion: @escaping (String) -> Void) {
-        service.deleteProcedure(procedure) { message in
+        service.deleteProcedureCoreData(procedure) { message in
             completion(message)
         }
     }
     
     func updateProcedure(_ procedure: GetProcedureModel, completion: @escaping (UpdatedProceduresModel, Bool) -> Void) {
-        service.updateProcedure(procedure: procedure) { model, result in
+        service.updateProcedureCoreData(procedure: procedure) { model, result in
             completion(model, result)
         }
     }

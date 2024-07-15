@@ -6,10 +6,14 @@
 //
 
 import Foundation
+import CoreData
 
 protocol ProcedureDetailServiceProtocol {
     func deleteProcedure(_ procedure: String, completion: @escaping (String) -> Void)
     func updateProcedure(procedure: GetProcedureModel, completion: @escaping (UpdatedProceduresModel, Bool) -> Void)
+    
+    func deleteProcedureCoreData(_ procedure: String, completion: @escaping (String) -> Void)
+    func updateProcedureCoreData(procedure: GetProcedureModel, completion: @escaping (UpdatedProceduresModel, Bool) -> Void)
 }
 
 class ProcedureDetailService: ProcedureDetailServiceProtocol {
@@ -84,5 +88,58 @@ class ProcedureDetailService: ProcedureDetailServiceProtocol {
 
 
         }.resume()
+    }
+}
+
+// MARK: Metodos que remove o procedimento do CoreData
+extension ProcedureDetailService {
+    func deleteProcedureCoreData(_ procedure: String, completion: @escaping (String) -> Void) {
+        let fetchRequest: NSFetchRequest<AddProduct> = AddProduct.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", procedure)
+
+        let context = CoreDataManager.shared.managedObjectContext
+        
+        do {
+            let objects = try context.fetch(fetchRequest)
+            
+            for object in objects {
+                context.delete(object)
+            }
+            
+            try context.save()
+            completion("Deletado com sucesso!")
+        } catch {
+            completion("Ocorreu um erro ao tentar deletar o procedimento!")
+        }
+    }
+    
+    func updateProcedureCoreData(procedure: GetProcedureModel, completion: @escaping (UpdatedProceduresModel, Bool) -> Void) {
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "AddProduct")
+        fetchRequest.predicate = NSPredicate(format: "id == %@", procedure._id)
+        
+        let context = CoreDataManager.shared.managedObjectContext
+        
+        do {
+            let objects = try context.fetch(fetchRequest)
+            
+            if let object = objects.first as? NSManagedObject {
+                object.setValue(procedure.nameClient, forKey: "nameClient")
+                object.setValue(procedure.typeProcedure, forKey: "typeProcedure")
+                object.setValue(procedure.formPayment.rawValue, forKey: "formPayment")
+                object.setValue(procedure.value, forKey: "value")
+                object.setValue(procedure.costs.orEmpty, forKey: "costs")
+                
+                try context.save()
+                
+                let updatedModel = UpdatedProceduresModel(nameClient: procedure.nameClient,
+                                                          typeProcedure: procedure.typeProcedure,
+                                                          formPayment: procedure.formPayment.rawValue,
+                                                          value: procedure.value,
+                                                          costs: procedure.costs.orEmpty)
+                completion(updatedModel, true)
+            }
+        } catch {
+            completion(UpdatedProceduresModel(), false)
+        }
     }
 }
