@@ -88,9 +88,11 @@ extension HomeService {
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "AddProduct")
 
         do {
-            let procedures = try CoreDataManager.shared.managedObjectContext.fetch(request) as! [NSManagedObject]
+            guard let procedures = try CoreDataManager.shared.managedObjectContext.fetch(request) as? [NSManagedObject] else {
+                completion([])
+                return
+            }
             
-            // Mapear NSManagedObjects para GetProcedureModel
             let getProcedureModels: [GetProcedureModel] = procedures.map { procedure in
                 return GetProcedureModel(
                     _id: procedure.value(forKey: "id") as? String ?? "",
@@ -106,8 +108,8 @@ extension HomeService {
             }
 
             completion(getProcedureModels)
-        } catch let error {
-            print("Erro ao recuperar procedimentos: \(error.localizedDescription)")
+        } catch {
+            completion([])
         }
     }
     
@@ -115,7 +117,10 @@ extension HomeService {
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Profile")
 
         do {
-            let users = try CoreDataManager.shared.managedObjectContext.fetch(request) as! [NSManagedObject]
+            guard let users = try CoreDataManager.shared.managedObjectContext.fetch(request) as? [NSManagedObject] else {
+                completion(UserModelList())
+                return
+            }
 
             // Mapear todos os objetos para UserModel
             let result: UserModelList = users.map { user in
@@ -131,8 +136,8 @@ extension HomeService {
             }
 
             completion(result)
-        } catch let error {
-            print("Erro ao recuperar dados do usuário: \(error.localizedDescription)")
+        } catch {
+            completion(UserModelList())
         }
     }
 }

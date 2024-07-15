@@ -64,6 +64,7 @@ class UserOnboardingViewModel: UserOnboardingViewModelProtocol {
     
     func saveDataCoreData(userModel: CreateUserModel, completion: @escaping (Bool) -> Void) {
         guard let entity = NSEntityDescription.entity(forEntityName: "Profile", in: CoreDataManager.shared.managedObjectContext) else {
+            completion(false)
             return
         }
         

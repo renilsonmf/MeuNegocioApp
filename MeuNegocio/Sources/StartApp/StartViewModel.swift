@@ -61,9 +61,10 @@ class StartViewModel: StartViewModelProtocol {
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Profile")
 
         do {
-            let users = try CoreDataManager.shared.managedObjectContext.fetch(request) as! [NSManagedObject]
+            guard let users = try CoreDataManager.shared.managedObjectContext.fetch(request) as? [NSManagedObject] else {
+                return []
+            }
 
-            // Mapear todos os objetos para UserModel
             let userList: UserModelList = users.map { user in
                 return UserModel(
                     id: user.value(forKey: "id") as? String ?? "",
@@ -77,8 +78,7 @@ class StartViewModel: StartViewModelProtocol {
             }
 
             return userList
-        } catch let error {
-            print("Erro ao recuperar dados do usuário: \(error.localizedDescription)")
+        } catch {
             return []
         }
     }
