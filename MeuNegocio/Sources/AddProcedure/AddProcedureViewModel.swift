@@ -70,7 +70,7 @@ class AddProcedureViewModel: AddProcedureViewModelProtocol {
         let objeto = NSManagedObject(entity: entity, insertInto: CoreDataManager.shared.managedObjectContext)
         
         // Configurar os atributos do objeto
-        objeto.setValue(UUID(), forKeyPath: "id")
+        objeto.setValue(UUID().uuidString, forKeyPath: "id")
         objeto.setValue(procedure.value, forKeyPath: "value")
         objeto.setValue(procedure.nameClient, forKeyPath: "nameClient")
         objeto.setValue(procedure.formPayment, forKeyPath: "formPayment")
