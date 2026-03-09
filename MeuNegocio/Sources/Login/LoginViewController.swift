@@ -102,9 +102,9 @@ extension LoginViewController: LoginScreenActionsProtocol {
     }
     
     func didTapSignInGoogle() {
-        GIDSignIn.sharedInstance()?.presentingViewController = self
-        GIDSignIn.sharedInstance()?.delegate = self
-        GIDSignIn.sharedInstance().signIn()
+//        GIDSignIn.sharedInstance()?.presentingViewController = self
+//        GIDSignIn.sharedInstance()?.delegate = self
+//        GIDSignIn.sharedInstance().signIn()
     }
     
     func didTapSignInApple() {
@@ -123,20 +123,20 @@ extension LoginViewController: LoginScreenActionsProtocol {
 }
 
 // MARK: - Login com o google
-extension LoginViewController: GIDSignInDelegate {
-    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
-        if error != nil {
-            return
-        }
-        
-        guard let auth = user.authentication else { return }
-        let credentials = GoogleAuthProvider.credential(withIDToken: auth.idToken, accessToken: auth.accessToken)
-        
-        viewModel.authLoginGoogle(credentials: credentials) { [ weak self ] result in
-            result ? self?.checkNewUser() : self?.showError("Tente novamente")
-        }
-    }
-}
+//extension LoginViewController: GIDSignInDelegate {
+//    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+//        if error != nil {
+//            return
+//        }
+//        
+//        guard let auth = user.authentication else { return }
+//        let credentials = GoogleAuthProvider.credential(withIDToken: auth.idToken, accessToken: auth.accessToken)
+//        
+//        viewModel.authLoginGoogle(credentials: credentials) { [ weak self ] result in
+//            result ? self?.checkNewUser() : self?.showError("Tente novamente")
+//        }
+//    }
+//}
 
 // MARK: Login com a Apple
 extension LoginViewController: ASAuthorizationControllerDelegate {

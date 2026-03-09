@@ -94,6 +94,10 @@ extension HomeService {
             }
             
             let getProcedureModels: [GetProcedureModel] = procedures.map { procedure in
+                let value = procedure.value(forKey: "value") as? String ?? ""
+                let costs = procedure.value(forKey: "costs") as? String ?? ""
+                let valueLiquid = (Double(value) ?? 0) - (Double(costs) ?? 0)
+                
                 return GetProcedureModel(
                     _id: procedure.value(forKey: "id") as? String ?? "",
                     nameClient: procedure.value(forKey: "nameClient") as? String ?? "",
@@ -103,7 +107,7 @@ extension HomeService {
                     currentDate: procedure.value(forKey: "currentDate") as? String ?? "",
                     email: procedure.value(forKey: "email") as? String ?? "",
                     costs: procedure.value(forKey: "costs") as? String,
-                    valueLiquid: procedure.value(forKey: "valueLiquid") as? String
+                    valueLiquid: String(valueLiquid)
                 )
             }
 

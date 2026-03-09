@@ -62,6 +62,9 @@ extension EditProcedureViewController: EditProcedureDelegate {
     func saveProcedure(procedures: GetProcedureModel) {
         self.viewModel.updateProcedure(procedures) { result, isSuccess in
             self.customView.saveButton.loadingIndicator(show: false)
+            
+            let valueLiquid = (Double(result.value ?? "") ?? 0) + (Double(result.costs ?? "") ?? 0)
+
             let model = GetProcedureModel(_id: procedures._id,
                                           nameClient: result.nameClient ?? procedures.nameClient,
                                           typeProcedure: result.typeProcedure ?? procedures.typeProcedure,
@@ -70,7 +73,7 @@ extension EditProcedureViewController: EditProcedureDelegate {
                                           currentDate: procedures.currentDate,
                                           email: procedures.email,
                                           costs: result.costs,
-                                          valueLiquid: result.valueLiquid)
+                                          valueLiquid: String(valueLiquid))
             if isSuccess {
                 self.showAlert(title: "", messsage: "Procedimento atualizado!") {
                     self.closedView(model)

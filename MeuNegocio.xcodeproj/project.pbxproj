@@ -831,7 +831,6 @@
 				C0A7410A27B1953000391CE6 /* Frameworks */,
 				C0A7410B27B1953000391CE6 /* Resources */,
 				7D73A576FE913323D3921CEF /* [CP] Embed Pods Frameworks */,
-				46A9C928DEB3934F5B766847 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -870,7 +869,6 @@
 				C0A7412B27B1953400391CE6 /* Frameworks */,
 				C0A7412C27B1953400391CE6 /* Resources */,
 				5A70AD9F8AD622582134037A /* [CP] Embed Pods Frameworks */,
-				461E7C606BEF838B04F2B1FA /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -953,40 +951,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		461E7C606BEF838B04F2B1FA /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MeuNegocio-MeuNegocioUITests/Pods-MeuNegocio-MeuNegocioUITests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MeuNegocio-MeuNegocioUITests/Pods-MeuNegocio-MeuNegocioUITests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MeuNegocio-MeuNegocioUITests/Pods-MeuNegocio-MeuNegocioUITests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		46A9C928DEB3934F5B766847 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MeuNegocio/Pods-MeuNegocio-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MeuNegocio/Pods-MeuNegocio-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MeuNegocio/Pods-MeuNegocio-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		5A70AD9F8AD622582134037A /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

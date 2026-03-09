@@ -57,7 +57,7 @@ final class HomeViewController: CoordinatedViewController {
     }
 
     private func bindProperties() {
-        viewModel.input.viewDidLoad()
+        viewModel.input.loadHome()
         viewModel.output.procedures.bind() { [weak self] result in
             self?.customView.procedures = result.reversed()
             self?.procedures = result.reversed()

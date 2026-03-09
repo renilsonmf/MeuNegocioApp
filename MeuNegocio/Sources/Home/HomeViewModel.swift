@@ -26,7 +26,7 @@ protocol HomeViewModelOutputProtocol {
 }
 
 protocol HomeViewModelInputProtocol {
-    func viewDidLoad()
+    func loadHome()
     func makeTotalAmounts(_ procedures: [GetProcedureModel]) -> String
 }
 
@@ -108,7 +108,7 @@ class HomeViewModel: HomeViewModelProtocol, HomeViewModelOutputProtocol {
 }
 
 extension HomeViewModel: HomeViewModelInputProtocol {
-    func viewDidLoad() {
+    func loadHome() {
         fetchProcedureItems()
         fetchUserData()
     }
