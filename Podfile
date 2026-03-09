@@ -4,11 +4,11 @@
 target 'MeuNegocio' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
-  pod 'FirebaseAuth', '11.15.0'
-  pod 'FirebaseFirestore', '11.15.0'
-  pod 'Firebase/Analytics', '11.15.0'
-  pod 'Firebase/RemoteConfig', '11.15.0'
-  pod 'lottie-ios'
+#  pod 'FirebaseAuth', '11.15.0'
+#  pod 'FirebaseFirestore', '11.15.0'
+#  pod 'Firebase/Analytics', '11.15.0'
+#  pod 'Firebase/RemoteConfig', '11.15.0'
+#  pod 'lottie-ios'
 
   target 'MeuNegocioTests' do
     inherit! :search_paths

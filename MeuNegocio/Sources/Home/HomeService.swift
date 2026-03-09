@@ -5,7 +5,7 @@
 //  Created by Renilson Moreira on 30/09/22.
 //
 import Foundation
-import Firebase
+import FirebaseAuth
 import CoreData
 
 protocol HomeServiceProtocol {

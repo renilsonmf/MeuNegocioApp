@@ -105,6 +105,20 @@ extension LoginViewController: LoginScreenActionsProtocol {
 //        GIDSignIn.sharedInstance()?.presentingViewController = self
 //        GIDSignIn.sharedInstance()?.delegate = self
 //        GIDSignIn.sharedInstance().signIn()
+        
+        GIDSignIn.sharedInstance.signIn(withPresenting: self) { signInResult, error in
+            guard let result = signInResult else {
+                // Inspect error
+                print("Error signing in: \(error?.localizedDescription ?? "No error description")")
+                self.showError("Tente novamente")
+                return
+            }
+            
+            // If sign in succeeded, print the ID token.
+            
+            print("ID Token: \(result.user.idToken?.tokenString ?? "")")
+            self.checkNewUser()
+        }
     }
     
     func didTapSignInApple() {
@@ -159,9 +173,13 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             }
 
             // Initialize a Firebase credential.
-            let credential = OAuthProvider.credential(withProviderID: "apple.com",
-                                                      idToken: idTokenString,
-                                                      rawNonce: nonce)
+//            let credential = OAuthProvider.credential(withProviderID: "apple.com",
+//                                                      idToken: idTokenString,
+//                                                      rawNonce: nonce)
+            
+            let credential = OAuthProvider.appleCredential(withIDToken: idTokenString,
+                                                           rawNonce: nonce,
+                                                           fullName: appleIDCredential.fullName)
             // Sign in with Firebase.
             viewModel.authLoginApple(credentials: credential) { [weak self] result in
                 result ? self?.checkNewUser() : self?.showError("Tente novamente")
