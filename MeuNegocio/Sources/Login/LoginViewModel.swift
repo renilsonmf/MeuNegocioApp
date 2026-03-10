@@ -7,6 +7,7 @@
 
 import FirebaseAuth
 import FirebaseCore
+import CoreData
 
 protocol LoginViewModelProtocol: AnyObject {
     func authLogin(_ email: String, _ password: String, resultLogin: @escaping (Bool, String) -> Void)
@@ -67,23 +68,31 @@ class LoginViewModel: LoginViewModelProtocol {
     
     func fetchUser(completion: @escaping (UserModelList) -> Void) {
         
-        let getUserByEmail = MNUserDefaults.getRemoteConfig()?.getUserByEmail ?? "http://54.86.122.10:3000/profile/"
-        
-        guard let email = Auth.auth().currentUser?.email else { return }
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Profile")
 
-        let urlString = "\(getUserByEmail)\(email)"
-        guard let url = URL(string: urlString) else { return }
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            guard let data = data else { return }
-            do {
-                let result = try JSONDecoder().decode(UserModelList.self, from: data)
-                completion(result)
+        do {
+            guard let users = try CoreDataManager.shared.managedObjectContext.fetch(request) as? [NSManagedObject] else {
+                completion(UserModelList())
+                return
             }
-            catch {
-                let error = error
-                print(error)
+
+            // Mapear todos os objetos para UserModel
+            let result: UserModelList = users.map { user in
+                return UserModel(
+                    id: user.value(forKey: "id") as? String ?? "",
+                    name: user.value(forKey: "name") as? String ?? "",
+                    barbershop: user.value(forKey: "barbershop") as? String ?? "",
+                    city: user.value(forKey: "city") as? String ?? "",
+                    state: user.value(forKey: "state") as? String ?? "",
+                    email: user.value(forKey: "email") as? String ?? "",
+                    v: 0
+                )
             }
-        }.resume()
+
+            completion(result)
+        } catch {
+            completion(UserModelList())
+        }
     }
     
     private func descriptionError(error: NSError) -> String {

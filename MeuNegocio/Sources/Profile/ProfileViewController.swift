@@ -60,7 +60,7 @@ class ProfileViewController: CoordinatedViewController {
             messsage: "Todos os seus dados serão removidos. \n  Tem certeza que deseja deletar sua conta?",
             closedScreen: false
         ) {
-            self.viewModel.deleteDatabaseData { [ weak self ] delete in
+            self.viewModel.deleteCoreData { [ weak self ] delete in
                 DispatchQueue.main.async {
                     delete ? self?.viewModel.logout() : self?.showAlert(
                         title: "Ocorreu um erro ao excluir sua conta",

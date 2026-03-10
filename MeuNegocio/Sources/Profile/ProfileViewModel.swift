@@ -5,10 +5,12 @@
 //  Created by Renilson Moreira on 02/09/22.
 //
 import FirebaseAuth
+import CoreData
 
 protocol ProfileViewModelProtocol {
     func signOut(resultSignOut: (Bool) -> Void)
     func deleteDatabaseData(completion: @escaping (Bool) -> Void)
+    func deleteCoreData(completion: @escaping (Bool) -> Void)
     func logout()
 }
 
@@ -68,5 +70,28 @@ class ProfileViewModel: ProfileViewModelProtocol {
     func logout() {
         KeychainService.deleteCredentials()
         coordinator?.closed()
+    }
+}
+
+// Core Data
+extension ProfileViewModel {
+    func deleteCoreData(completion: @escaping (Bool) -> Void) {
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Profile")
+        
+        let context = CoreDataManager.shared.managedObjectContext
+        
+        do {
+            let objects = try context.fetch(fetchRequest)
+            
+            for case let object as NSManagedObject in objects {
+                context.delete(object)
+            }
+            
+            try context.save()
+            completion(true)
+            
+        } catch {
+            completion(false)
+        }
     }
 }

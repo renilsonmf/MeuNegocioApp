@@ -29,13 +29,13 @@ class StartViewModel: StartViewModelProtocol {
     }
     
     func validate() {
-       // if checkPassedTheOnboarding() {
-       //     autoLogin()
-       // } else {
-       //     self.coordinator?.navigateToLogin()
-       // }
+        if checkPassedTheOnboarding() {
+            autoLogin()
+        } else {
+            self.coordinator?.navigateToLogin()
+        }
         
-        userDataCoreData().isEmpty ? self.coordinator?.navigateToOnboarding() : self.coordinator?.navigateToHome()
+//        userDataCoreData().isEmpty ? self.coordinator?.navigateToOnboarding() : self.coordinator?.navigateToHome()
     }
     
     func autoLogin() {
