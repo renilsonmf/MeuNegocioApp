@@ -28,8 +28,8 @@ class ProcedureDetailViewModel: ProcedureDetailViewModelProtocol {
         self.service = service
     }
 
-    internal func deleteProcedure(_ procedure: String, completion: @escaping (String) -> Void) {
-        service.deleteProcedureCoreData(procedure) { message in
+    func deleteProcedure(_ procedure: String, completion: @escaping (String) -> Void) {
+        service.deleteProcedureFirestore(procedure) { message in
             completion(message)
         }
     }
