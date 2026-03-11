@@ -70,16 +70,16 @@ class LoginViewController: CoordinatedViewController {
             return
         }
         self.customView.loginButton.loadingIndicator(show: false)
-        viewModel.fetchUser { [ weak self ] result in
+        viewModel.fetchUser { [ weak self ] user in
             DispatchQueue.main.async {
                 MNUserDefaults.remove(key: MNKeys.emailNewUser)
-                if result.isEmpty {
-                    self?.viewModel.navigateToUserOnboarding()
-                } else {
+                if let user {
                     KeychainService.saveCredentials(email: email, password: password)
                     self?.viewModel.navigateToHome()
                     guard let email = Auth.auth().currentUser?.email else { return }
                     MNUserDefaults.set(value: true, forKey: email)
+                } else {
+                    self?.viewModel.navigateToUserOnboarding()
                 }
             }
         }
@@ -102,9 +102,6 @@ extension LoginViewController: LoginScreenActionsProtocol {
     }
     
     func didTapSignInGoogle() {
-//        GIDSignIn.sharedInstance()?.presentingViewController = self
-//        GIDSignIn.sharedInstance()?.delegate = self
-//        GIDSignIn.sharedInstance().signIn()
         
         GIDSignIn.sharedInstance.signIn(withPresenting: self) { signInResult, error in
             guard let result = signInResult else {

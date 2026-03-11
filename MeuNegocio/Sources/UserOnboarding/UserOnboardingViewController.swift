@@ -39,7 +39,7 @@ class UserOnboardingViewController: CoordinatedViewController {
 extension UserOnboardingViewController: CreateUserOnboardingProtocol {
     func addUserOnboarding(model: CreateUserModel) {
         customView.continueButton.loadingIndicator(show: true)
-        viewModel.saveDataCoreData(userModel: CreateUserModel(
+        viewModel.createUser(userModel: CreateUserModel(
             name: model.name,
             barbershop: model.barbershop,
             city: model.city,

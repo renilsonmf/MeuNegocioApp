@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseAuth
+import FirebaseFirestore
 import CoreData
 
 protocol StartViewModelProtocol {
@@ -56,30 +57,34 @@ class StartViewModel: StartViewModelProtocol {
             self.coordinator?.navigateToLogin()
         }
     }
-    
-    func userDataCoreData() -> UserModelList {
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Profile")
 
-        do {
-            guard let users = try CoreDataManager.shared.managedObjectContext.fetch(request) as? [NSManagedObject] else {
-                return []
-            }
-
-            let userList: UserModelList = users.map { user in
-                return UserModel(
-                    id: user.value(forKey: "id") as? String ?? "",
-                    name: user.value(forKey: "name") as? String ?? "",
-                    barbershop: user.value(forKey: "barbershop") as? String ?? "",
-                    city: user.value(forKey: "city") as? String ?? "",
-                    state: user.value(forKey: "state") as? String ?? "",
-                    email: user.value(forKey: "email") as? String ?? "",
-                    v: 0
-                )
-            }
-
-            return userList
-        } catch {
-            return []
+    func fetchUser(completion: @escaping (UserModel?) -> Void) {
+        
+        guard let uid = Auth.auth().currentUser?.uid else {
+            completion(nil)
+            return
         }
+
+        let db = Firestore.firestore()
+
+        db.collection("users")
+            .document(uid)
+            .getDocument { snapshot, error in
+                
+                guard let data = snapshot?.data(), error == nil else {
+                    completion(nil)
+                    return
+                }
+
+                let user = UserModel(
+                    name: data["name"] as? String ?? "",
+                    barbershop: data["barbershop"] as? String ?? "",
+                    city: data["city"] as? String ?? "",
+                    state: data["state"] as? String ?? "",
+                    email: data["email"] as? String ?? ""
+                )
+
+                completion(user)
+            }
     }
 }

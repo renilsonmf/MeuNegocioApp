@@ -6,18 +6,20 @@
 //
 import Foundation
 import FirebaseAuth
+import FirebaseFirestore
 import CoreData
 
 protocol HomeServiceProtocol {
     func getProcedureList(completion: @escaping ([GetProcedureModel]) -> Void)
     func deleteProcedure(_ procedure: String, completion: @escaping () -> Void)
-    func fetchUser(completion: @escaping (UserModelList) -> Void)
+    func fetchUser(completion: @escaping (UserModel?) -> Void)
     
     func getProcedureListCoreData(completion: @escaping ([GetProcedureModel]) -> Void)
-    func fetchUserCoreData(completion: @escaping (UserModelList) -> Void)
 }
 
 class HomeService: HomeServiceProtocol {
+    
+    private let firesore = Firestore.firestore()
 
     // Get procedure list
     func getProcedureList(completion: @escaping ([GetProcedureModel]) -> Void) {
@@ -59,27 +61,6 @@ class HomeService: HomeServiceProtocol {
             completion()
         }.resume()
     }
-    
-    func fetchUser(completion: @escaping (UserModelList) -> Void) {
-        guard let email = Auth.auth().currentUser?.email else { return }
-        
-        let getUserByEmail = MNUserDefaults.getRemoteConfig()?.getUserByEmail ?? "http://54.86.122.10:3000/profile/"
-        
-        let urlString = "\(getUserByEmail)\(email)"
-
-        guard let url = URL(string: urlString) else { return }
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            guard let data = data else { return }
-            do {
-                let result = try JSONDecoder().decode(UserModelList.self, from: data)
-                completion(result)
-            }
-            catch {
-                let error = error
-                print(error)
-            }
-        }.resume()
-    }
 }
 
 // MARK: Metodos para coletar dados do CoreData
@@ -117,31 +98,34 @@ extension HomeService {
         }
     }
     
-    func fetchUserCoreData(completion: @escaping (UserModelList) -> Void) {
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Profile")
-
-        do {
-            guard let users = try CoreDataManager.shared.managedObjectContext.fetch(request) as? [NSManagedObject] else {
-                completion(UserModelList())
-                return
-            }
-
-            // Mapear todos os objetos para UserModel
-            let result: UserModelList = users.map { user in
-                return UserModel(
-                    id: user.value(forKey: "id") as? String ?? "",
-                    name: user.value(forKey: "name") as? String ?? "",
-                    barbershop: user.value(forKey: "barbershop") as? String ?? "",
-                    city: user.value(forKey: "city") as? String ?? "",
-                    state: user.value(forKey: "state") as? String ?? "",
-                    email: user.value(forKey: "email") as? String ?? "",
-                    v: 0
-                )
-            }
-
-            completion(result)
-        } catch {
-            completion(UserModelList())
+    func fetchUser(completion: @escaping (UserModel?) -> Void) {
+        
+        guard let uid = Auth.auth().currentUser?.uid else {
+            completion(nil)
+            return
         }
+        
+        firesore.collection("users")
+            .document(uid)
+            .getDocument { snapshot, error in
+                
+                if let snapshot = snapshot, snapshot.exists {
+                    
+                    let data = snapshot.data() ?? [:]
+                    
+                    let user = UserModel(
+                        name: data["name"] as? String ?? "",
+                        barbershop: data["barbershop"] as? String ?? "",
+                        city: data["city"] as? String ?? "",
+                        state: data["state"] as? String ?? "",
+                        email: data["email"] as? String ?? ""
+                    )
+                    
+                    completion(user)
+                    
+                } else {
+                    completion(nil)
+                }
+            }
     }
 }

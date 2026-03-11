@@ -11,17 +11,11 @@ import Foundation
 typealias UserModelList = [UserModel]
 
 struct UserModel: Decodable {
-    let id: String
     let name: String
     let barbershop: String
-    let city, state, email: String
-    let v: Int
-
-    enum CodingKeys: String, CodingKey {
-        case id = "_id"
-        case name, barbershop, city, state, email
-        case v = "__v"
-    }
+    let city: String
+    let state: String
+    let email: String
 }
 
 struct CreateUserModel: Codable {

@@ -8,12 +8,13 @@
 import FirebaseAuth
 import FirebaseCore
 import CoreData
+import FirebaseFirestore
 
 protocol LoginViewModelProtocol: AnyObject {
     func authLogin(_ email: String, _ password: String, resultLogin: @escaping (Bool, String) -> Void)
     func authLoginGoogle(credentials: AuthCredential, resultAuth: @escaping (Bool) -> Void)
     func authLoginApple(credentials: AuthCredential, resultAuth: @escaping (Bool) -> Void)
-    func fetchUser(completion: @escaping (UserModelList) -> Void)
+    func fetchUser(completion: @escaping (UserModel?) -> Void)
     func navigateToHome()
     func navigateToUserOnboarding()
     func navigateToForgotPassword(email: String)
@@ -25,6 +26,7 @@ class LoginViewModel: LoginViewModelProtocol {
     
     // MARK: - Properties
     private var coordinator: LoginCoordinator?
+    private let db = Firestore.firestore()
     
     // MARK: - Init
     init(coordinator: LoginCoordinator?) {
@@ -65,34 +67,36 @@ class LoginViewModel: LoginViewModelProtocol {
             }
         }
     }
-    
-    func fetchUser(completion: @escaping (UserModelList) -> Void) {
+
+    func fetchUser(completion: @escaping (UserModel?) -> Void) {
         
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Profile")
-
-        do {
-            guard let users = try CoreDataManager.shared.managedObjectContext.fetch(request) as? [NSManagedObject] else {
-                completion(UserModelList())
-                return
-            }
-
-            // Mapear todos os objetos para UserModel
-            let result: UserModelList = users.map { user in
-                return UserModel(
-                    id: user.value(forKey: "id") as? String ?? "",
-                    name: user.value(forKey: "name") as? String ?? "",
-                    barbershop: user.value(forKey: "barbershop") as? String ?? "",
-                    city: user.value(forKey: "city") as? String ?? "",
-                    state: user.value(forKey: "state") as? String ?? "",
-                    email: user.value(forKey: "email") as? String ?? "",
-                    v: 0
-                )
-            }
-
-            completion(result)
-        } catch {
-            completion(UserModelList())
+        guard let uid = Auth.auth().currentUser?.uid else {
+            completion(nil)
+            return
         }
+        
+        db.collection("users")
+            .document(uid)
+            .getDocument { snapshot, error in
+                
+                if let snapshot = snapshot, snapshot.exists {
+                    
+                    let data = snapshot.data() ?? [:]
+                    
+                    let user = UserModel(
+                        name: data["name"] as? String ?? "",
+                        barbershop: data["barbershop"] as? String ?? "",
+                        city: data["city"] as? String ?? "",
+                        state: data["state"] as? String ?? "",
+                        email: data["email"] as? String ?? ""
+                    )
+                    
+                    completion(user)
+                    
+                } else {
+                    completion(nil)
+                }
+            }
     }
     
     private func descriptionError(error: NSError) -> String {

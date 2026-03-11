@@ -17,9 +17,9 @@ class ProfileViewController: CoordinatedViewController {
     )
 
     private let viewModel: ProfileViewModelProtocol
-    private let userData: UserModelList
+    private var userData: UserModel? = nil
     
-    init(viewModel: ProfileViewModelProtocol, coordinator: CoordinatorProtocol, userData: UserModelList){
+    init(viewModel: ProfileViewModelProtocol, coordinator: CoordinatorProtocol, userData: UserModel?){
         self.viewModel = viewModel
         self.userData = userData
         super.init(coordinator: coordinator)
@@ -42,7 +42,7 @@ class ProfileViewController: CoordinatedViewController {
     }
     
     private func setUserData() {
-        self.customView.user = userData.first
+        self.customView.user = userData
     }
     
     private func logout() {

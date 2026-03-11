@@ -11,7 +11,7 @@ protocol HomeViewModelProtocol: AnyObject {
     var input: HomeViewModelInputProtocol { get }
     var output: HomeViewModelOutputProtocol { get }
     func navigateToReport(procedures: [GetProcedureModel])
-    func navigateToProfile(_ userData: UserModelList)
+    func navigateToProfile(_ userData: UserModel?)
     func navigateToAddProcedure()
     func navigateToHelp()
     func navigateToRateApp()
@@ -22,7 +22,7 @@ protocol HomeViewModelProtocol: AnyObject {
 // MARK: - Protocols
 protocol HomeViewModelOutputProtocol {
     var procedures: Bindable<[GetProcedureModel]> { get }
-    var userData: Bindable<UserModelList> { get }
+    var userData: Bindable<UserModel?> { get }
 }
 
 protocol HomeViewModelInputProtocol {
@@ -37,7 +37,7 @@ class HomeViewModel: HomeViewModelProtocol, HomeViewModelOutputProtocol {
     var input: HomeViewModelInputProtocol { self }
     var output: HomeViewModelOutputProtocol { self }
     var procedures: Bindable<[GetProcedureModel]> = .init([])
-    var userData: Bindable<UserModelList> = .init([])
+    var userData: Bindable<UserModel?> = .init(nil)
 
     // MARK: - Properties
     private var coordinator: HomeCoordinator?
@@ -57,7 +57,7 @@ class HomeViewModel: HomeViewModelProtocol, HomeViewModelOutputProtocol {
     }
     
     private func fetchUserData() {
-        service.fetchUserCoreData { result in
+        service.fetchUser { result in
             DispatchQueue.main.async {
                 self.userData.value = result
             }
@@ -79,7 +79,7 @@ class HomeViewModel: HomeViewModelProtocol, HomeViewModelOutputProtocol {
         coordinator?.navigateTo(.Report(procedures))
     }
 
-    func navigateToProfile(_ userData: UserModelList) {
+    func navigateToProfile(_ userData: UserModel?) {
         TrackEvent.track(event: .homeProfile)
         coordinator?.navigateTo(.Profile(userData))
     }

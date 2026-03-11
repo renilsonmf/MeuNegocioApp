@@ -73,6 +73,7 @@
 		723EEA372F5F629500D43557 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 723EEA362F5F629500D43557 /* FirebaseCore */; };
 		723EEA392F5F629500D43557 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 723EEA382F5F629500D43557 /* FirebaseCrashlytics */; };
 		723EEA3B2F5F62B100D43557 /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = 723EEA3A2F5F62B100D43557 /* FirebaseRemoteConfig */; };
+		726F35BE2F605DF400FAAF11 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 726F35BD2F605DF400FAAF11 /* FirebaseFirestore */; };
 		C016B24D28DFA2DE007372E4 /* ProcedureModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C016B24C28DFA2DE007372E4 /* ProcedureModel.swift */; };
 		C016B44128DFE10B007372E4 /* PaymentMethodType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C016B44028DFE10B007372E4 /* PaymentMethodType.swift */; };
 		C016B61728E0AFC4007372E4 /* ProcedureDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C016B61628E0AFC4007372E4 /* ProcedureDetailViewController.swift */; };
@@ -315,6 +316,7 @@
 				723EEA392F5F629500D43557 /* FirebaseCrashlytics in Frameworks */,
 				723EEA332F5F629500D43557 /* FirebaseAnalytics in Frameworks */,
 				723EEA372F5F629500D43557 /* FirebaseCore in Frameworks */,
+				726F35BE2F605DF400FAAF11 /* FirebaseFirestore in Frameworks */,
 				723EEA302F5F618D00D43557 /* Lottie in Frameworks */,
 				723EEA3B2F5F62B100D43557 /* FirebaseRemoteConfig in Frameworks */,
 			);
@@ -495,6 +497,13 @@
 			path = RateApp;
 			sourceTree = "<group>";
 		};
+		726F35BC2F605DF400FAAF11 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		C016B24B28DFA2D1007372E4 /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -563,6 +572,7 @@
 				C0A7410F27B1953000391CE6 /* MeuNegocio */,
 				C0A7412627B1953400391CE6 /* MeuNegocioTests */,
 				C0A7413127B1953400391CE6 /* MeuNegocioUITests */,
+				726F35BC2F605DF400FAAF11 /* Frameworks */,
 				C0A7410E27B1953000391CE6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -1463,6 +1473,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 723EEA312F5F629500D43557 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseRemoteConfig;
+		};
+		726F35BD2F605DF400FAAF11 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 723EEA312F5F629500D43557 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
 		};
 /* End XCSwiftPackageProductDependency section */
 
