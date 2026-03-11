@@ -12,7 +12,7 @@ import FirebaseAuth
 
 protocol ProcedureDetailServiceProtocol {
     func deleteProcedureFirestore(_ procedure: String, completion: @escaping (String) -> Void)
-    func updateProcedureCoreData(procedure: GetProcedureModel, completion: @escaping (UpdatedProceduresModel, Bool) -> Void)
+    func updateProcedureFirestore(procedure: GetProcedureModel, completion: @escaping (UpdatedProceduresModel, Bool) -> Void)
 }
 
 class ProcedureDetailService: ProcedureDetailServiceProtocol {
@@ -41,36 +41,37 @@ class ProcedureDetailService: ProcedureDetailServiceProtocol {
             }
     }
     
-    func updateProcedureCoreData(procedure: GetProcedureModel, completion: @escaping (UpdatedProceduresModel, Bool) -> Void) {
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "AddProduct")
-        fetchRequest.predicate = NSPredicate(format: "id == %@", procedure._id)
+    func updateProcedureFirestore(procedure: GetProcedureModel, completion: @escaping (UpdatedProceduresModel, Bool) -> Void) {
         
-        let context = CoreDataManager.shared.managedObjectContext
-        
-        do {
-            let objects = try context.fetch(fetchRequest)
-            
-            guard let object = objects.first as? NSManagedObject else {
-                completion(UpdatedProceduresModel(), false)
-                return
-            }
-            
-            object.setValue(procedure.nameClient, forKey: "nameClient")
-            object.setValue(procedure.typeProcedure, forKey: "typeProcedure")
-            object.setValue(procedure.formPayment.rawValue, forKey: "formPayment")
-            object.setValue(procedure.value, forKey: "value")
-            object.setValue(procedure.costs.orEmpty, forKey: "costs")
-            
-            try context.save()
-            
-            let updatedModel = UpdatedProceduresModel(nameClient: procedure.nameClient,
-                                                      typeProcedure: procedure.typeProcedure,
-                                                      formPayment: procedure.formPayment.rawValue,
-                                                      value: procedure.value,
-                                                      costs: procedure.costs.orEmpty)
-            completion(updatedModel, true)
-        } catch {
+        guard let uid = Auth.auth().currentUser?.uid else {
             completion(UpdatedProceduresModel(), false)
+            return
         }
+        
+        firestore.collection("users")
+            .document(uid)
+            .collection("procedures")
+            .document(procedure._id)
+            .updateData([
+                "nameClient": procedure.nameClient,
+                "typeProcedure": procedure.typeProcedure,
+                "formPayment": procedure.formPayment.rawValue,
+                "value": procedure.value,
+                "costs": procedure.costs.orEmpty
+            ]) { error in
+                if let error = error {
+                    print("Erro ao atualizar:", error)
+                    completion(UpdatedProceduresModel(), false)
+                } else {
+                    let updatedModel = UpdatedProceduresModel(
+                        nameClient: procedure.nameClient,
+                        typeProcedure: procedure.typeProcedure,
+                        formPayment: procedure.formPayment.rawValue,
+                        value: procedure.value,
+                        costs: procedure.costs.orEmpty
+                    )
+                    completion(updatedModel, true)
+                }
+            }
     }
 }

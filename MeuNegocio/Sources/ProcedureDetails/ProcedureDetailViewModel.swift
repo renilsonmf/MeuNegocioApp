@@ -35,7 +35,7 @@ class ProcedureDetailViewModel: ProcedureDetailViewModelProtocol {
     }
     
     func updateProcedure(_ procedure: GetProcedureModel, completion: @escaping (UpdatedProceduresModel, Bool) -> Void) {
-        service.updateProcedureCoreData(procedure: procedure) { model, result in
+        service.updateProcedureFirestore(procedure: procedure) { model, result in
             completion(model, result)
         }
     }
