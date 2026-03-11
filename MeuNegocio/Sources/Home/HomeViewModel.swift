@@ -49,7 +49,7 @@ class HomeViewModel: HomeViewModelProtocol, HomeViewModelOutputProtocol {
     }
 
     private func fetchProcedureItems() {
-        service.getProcedureListCoreData { result in
+        service.getProcedureListFirestore { result in
             DispatchQueue.main.async {
                 self.procedures.value = result
             }
@@ -57,7 +57,7 @@ class HomeViewModel: HomeViewModelProtocol, HomeViewModelOutputProtocol {
     }
     
     private func fetchUserData() {
-        service.fetchUser { result in
+        service.fetchUserFirestore { result in
             DispatchQueue.main.async {
                 self.userData.value = result
             }

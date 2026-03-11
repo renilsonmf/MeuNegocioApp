@@ -46,7 +46,7 @@ extension AddProcedureViewController: AddProcedureActionsProtocol {
     
     func addProcedure(nameClient: String, typeProcedure: String, formPayment: String, value: String, email: String, costs: String) {
         customView.addButton.loadingIndicator(show: true)
-        viewModel.createProcedureCoreData(
+        viewModel.createProcedureFirestore(
             procedure: CreateProcedureModel(
                 nameClient: nameClient,
                 typeProcedure: typeProcedure,

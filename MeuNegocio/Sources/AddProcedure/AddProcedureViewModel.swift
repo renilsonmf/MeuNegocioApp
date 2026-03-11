@@ -7,10 +7,12 @@
 
 import UIKit
 import CoreData
+import FirebaseFirestore
+import FirebaseAuth
 
 protocol AddProcedureViewModelProtocol {
     func createProcedure(procedure: CreateProcedureModel, completion: @escaping (Bool) -> Void)
-    func createProcedureCoreData(procedure: CreateProcedureModel, completion: @escaping (Bool) -> Void)
+    func createProcedureFirestore(procedure: CreateProcedureModel, completion: @escaping (Bool) -> Void)
     func closed()
 }
 
@@ -65,27 +67,39 @@ class AddProcedureViewModel: AddProcedureViewModelProtocol {
         }.resume()
     }
     
-    func createProcedureCoreData(procedure: CreateProcedureModel, completion: @escaping (Bool) -> Void) {
-        guard let entity = NSEntityDescription.entity(forEntityName: "AddProduct", in: CoreDataManager.shared.managedObjectContext) else {
+    func createProcedureFirestore(procedure: CreateProcedureModel, completion: @escaping (Bool) -> Void) {
+        
+        guard let uid = Auth.auth().currentUser?.uid else {
+            completion(false)
             return
         }
         
-        let objeto = NSManagedObject(entity: entity, insertInto: CoreDataManager.shared.managedObjectContext)
+        let db = Firestore.firestore()
         
-        objeto.setValue(UUID().uuidString, forKeyPath: "id")
-        objeto.setValue(procedure.value, forKeyPath: "value")
-        objeto.setValue(procedure.nameClient, forKeyPath: "nameClient")
-        objeto.setValue(procedure.formPayment, forKeyPath: "formPayment")
-        objeto.setValue(procedure.email, forKeyPath: "email")
-        objeto.setValue(procedure.typeProcedure, forKeyPath: "typeProcedure")
-        objeto.setValue(procedure.currentDate, forKeyPath: "currentDate")
-        objeto.setValue(procedure.costs, forKeyPath: "costs")
+        let procedureId = UUID().uuidString
         
-        do {
-            try CoreDataManager.shared.managedObjectContext.save()
-            completion(true)
-        } catch {
-            completion(false)
-        }
+        db.collection("users")
+            .document(uid)
+            .collection("procedures")
+            .document(procedureId)
+            .setData([
+                "id": procedureId,
+                "value": procedure.value,
+                "nameClient": procedure.nameClient,
+                "formPayment": procedure.formPayment,
+                "email": procedure.email,
+                "typeProcedure": procedure.typeProcedure,
+                "currentDate": procedure.currentDate,
+                "costs": procedure.costs,
+                "createdAt": Timestamp()
+            ]) { error in
+                
+                if let error = error {
+                    print("Erro ao salvar procedimento:", error)
+                    completion(false)
+                } else {
+                    completion(true)
+                }
+            }
     }
 }

@@ -35,8 +35,6 @@ class StartViewModel: StartViewModelProtocol {
         } else {
             self.coordinator?.navigateToLogin()
         }
-        
-//        userDataCoreData().isEmpty ? self.coordinator?.navigateToOnboarding() : self.coordinator?.navigateToHome()
     }
     
     func autoLogin() {
