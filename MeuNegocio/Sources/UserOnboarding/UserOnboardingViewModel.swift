@@ -5,13 +5,10 @@
 //  Created by Renilson Moreira on 30/09/22.
 //
 
-import Foundation
-import CoreData
 import FirebaseAuth
 import FirebaseFirestore
 
 protocol UserOnboardingViewModelProtocol {
-//    func createUser(userModel: CreateUserModel, completion: @escaping (Bool) -> Void)
     func createUser(userModel: CreateUserModel, completion: @escaping (Bool) -> Void)
     func navigateToHome()
 }

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5203F46B2B682F1F00DCCA7A /* MeuNegocioModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5203F4692B682F1F00DCCA7A /* MeuNegocioModel.xcdatamodeld */; };
 		52057DB1298C764000A051C1 /* EditProcedureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52057DB0298C764000A051C1 /* EditProcedureViewController.swift */; };
 		520C66A628A850270016F167 /* UITextField+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520C66A528A850270016F167 /* UITextField+Extensions.swift */; };
 		520C66A828A857A90016F167 /* CustomSubmitButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520C66A728A857A80016F167 /* CustomSubmitButton.swift */; };
@@ -29,7 +28,6 @@
 		523ED6DE28B19DF10092FAAC /* CreateAccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523ED6DD28B19DF10092FAAC /* CreateAccountViewModel.swift */; };
 		52402322297F660400CBEDB2 /* ProcedureDetailService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52402321297F660400CBEDB2 /* ProcedureDetailService.swift */; };
 		5249214928C00621006F01DA /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5249214828C00621006F01DA /* HomeViewModel.swift */; };
-		524B5BC12C42F859001CA75F /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524B5BC02C42F859001CA75F /* CoreDataManager.swift */; };
 		52589307297765940032E4B1 /* EditProcedureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52589306297765940032E4B1 /* EditProcedureView.swift */; };
 		52597A8629144F0200B71FBC /* loading.json in Resources */ = {isa = PBXBuildFile; fileRef = 52597A8529144F0200B71FBC /* loading.json */; };
 		527D06D828AAD5ED001E0BE0 /* CreateAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527D06D728AAD5ED001E0BE0 /* CreateAccountViewController.swift */; };
@@ -166,7 +164,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5203F46A2B682F1F00DCCA7A /* MeuNegocio.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MeuNegocio.xcdatamodel; sourceTree = "<group>"; };
 		52057DB0298C764000A051C1 /* EditProcedureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProcedureViewController.swift; sourceTree = "<group>"; };
 		520C66A528A850270016F167 /* UITextField+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Extensions.swift"; sourceTree = "<group>"; };
 		520C66A728A857A80016F167 /* CustomSubmitButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSubmitButton.swift; sourceTree = "<group>"; };
@@ -188,7 +185,6 @@
 		523ED6DD28B19DF10092FAAC /* CreateAccountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CreateAccountViewModel.swift; path = MeuNegocio/Sources/CreateAccount/CreateAccountViewModel.swift; sourceTree = SOURCE_ROOT; };
 		52402321297F660400CBEDB2 /* ProcedureDetailService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcedureDetailService.swift; sourceTree = "<group>"; };
 		5249214828C00621006F01DA /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
-		524B5BC02C42F859001CA75F /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		52589306297765940032E4B1 /* EditProcedureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProcedureView.swift; sourceTree = "<group>"; };
 		52597A8529144F0200B71FBC /* loading.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = loading.json; sourceTree = "<group>"; };
 		527D06D728AAD5ED001E0BE0 /* CreateAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountViewController.swift; sourceTree = "<group>"; };
@@ -568,7 +564,6 @@
 		C0A7410427B1953000391CE6 = {
 			isa = PBXGroup;
 			children = (
-				5203F4692B682F1F00DCCA7A /* MeuNegocioModel.xcdatamodeld */,
 				C0A7410F27B1953000391CE6 /* MeuNegocio */,
 				C0A7412627B1953400391CE6 /* MeuNegocioTests */,
 				C0A7413127B1953400391CE6 /* MeuNegocioUITests */,
@@ -714,7 +709,6 @@
 				C0A741DA27B1A93E00391CE6 /* NSLayoutDimension+Extension.swift */,
 				C0A741DF27B1A95700391CE6 /* Padding.swift */,
 				C036EAA428FBB69D0049C80D /* Constants.swift */,
-				524B5BC02C42F859001CA75F /* CoreDataManager.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -965,7 +959,6 @@
 				C0AF028128C536C600B816AA /* ForgetPasswordViewController.swift in Sources */,
 				52ECF8722951092700C6230A /* RateAppCoordinator.swift in Sources */,
 				C0AF028728C5389600B816AA /* ForgetPasswordView.swift in Sources */,
-				5203F46B2B682F1F00DCCA7A /* MeuNegocioModel.xcdatamodeld in Sources */,
 				C0AF028528C5373D00B816AA /* ForgetPasswordViewModel.swift in Sources */,
 				C0A7417527B1984100391CE6 /* CoordinatedViewController.swift in Sources */,
 				C080EB7528E7FB4F00555D80 /* ReportViewController+Ext.swift in Sources */,
@@ -1047,7 +1040,6 @@
 				52C4AE7628B566180055E384 /* ProfileCoordinator.swift in Sources */,
 				527D06D828AAD5ED001E0BE0 /* CreateAccountViewController.swift in Sources */,
 				520C66A628A850270016F167 /* UITextField+Extensions.swift in Sources */,
-				524B5BC12C42F859001CA75F /* CoreDataManager.swift in Sources */,
 				C0AFF99F28C4621A00B816AA /* HelpCoordinator.swift in Sources */,
 				52B8A08628E2557000B1C9F7 /* CardButtonView.swift in Sources */,
 				C0A741A727B1A4FE00391CE6 /* ActionTypealias.swift in Sources */,
@@ -1480,19 +1472,6 @@
 			productName = FirebaseFirestore;
 		};
 /* End XCSwiftPackageProductDependency section */
-
-/* Begin XCVersionGroup section */
-		5203F4692B682F1F00DCCA7A /* MeuNegocioModel.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				5203F46A2B682F1F00DCCA7A /* MeuNegocio.xcdatamodel */,
-			);
-			currentVersion = 5203F46A2B682F1F00DCCA7A /* MeuNegocio.xcdatamodel */;
-			path = MeuNegocioModel.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = C0A7410527B1953000391CE6 /* Project object */;
 }

@@ -4,10 +4,8 @@
 //
 //  Created by Renilson Moreira on 30/09/22.
 //
-import Foundation
 import FirebaseAuth
 import FirebaseFirestore
-import CoreData
 
 protocol HomeServiceProtocol {
     func deleteProcedure(_ procedure: String, completion: @escaping () -> Void)

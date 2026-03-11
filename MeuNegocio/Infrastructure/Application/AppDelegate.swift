@@ -7,7 +7,6 @@
 
 import UIKit
 import FirebaseCore
-import CoreData
 import GoogleSignIn
 
 @main
@@ -16,7 +15,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()
         RemoteConfigManager.shared.fetch()
-//        GIDSignIn.sharedInstance()?.clientID = FirebaseApp.app()?.options.clientID
         
         if !isAuthenticated() {
             KeychainService.deleteCredentials()
@@ -52,21 +50,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func isAuthenticated() -> Bool {
         return MNUserDefaults.get(boolForKey: MNKeys.authenticated) ?? false
     }
-    
-    lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "MeuNegocioModel")
-        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
-            if let error = error as NSError? {
-                fatalError("Erro ao carregar o Core Data Store: \(error), \(error.userInfo)")
-            }
-        })
-        return container
-    }()
-    
-    
-    var managedObjectContext: NSManagedObjectContext {
-        return persistentContainer.viewContext
-    }
-    
 }
 

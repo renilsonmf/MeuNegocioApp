@@ -46,11 +46,13 @@ class ProfileViewController: CoordinatedViewController {
     }
     
     private func logout() {
-        viewModel.signOut { [ weak self ] result in
-            result ? self?.viewModel.logout() : self?.showAlert(
-                title: "Ocorreu um erro",
-                messsage: "Tente novamente mais tarde"
-            )
+        self.showDeleteAlert(title: "Tem certeza que deseja sair?", messsage: "", titleSecondaryButton: "Sair") {
+            self.viewModel.signOut { [ weak self ] result in
+                result ? self?.viewModel.logout() : self?.showAlert(
+                    title: "Ocorreu um erro",
+                    messsage: "Tente novamente mais tarde"
+                )
+            }
         }
     }
     

@@ -107,8 +107,6 @@ class ProfileView: UIView {
         let label = MNLabel(
             font: UIFont.boldSystemFont(ofSize: 16),
             textColor: .MNColors.grayDescription)
-        // MARK: Ajuste para cenario do coreData
-//        label.isHidden = true
         return label
     }()
     
@@ -124,8 +122,6 @@ class ProfileView: UIView {
         view.addTopBorder()
         view.addBottomBorder()
         view.addGestureRecognizer(tap)
-        // MARK: Ajuste para cenario do coreData
-//        view.isHidden = true
         return view
     }()
     
@@ -141,8 +137,6 @@ class ProfileView: UIView {
         view.addTopBorder()
         view.addBottomBorder()
         view.addGestureRecognizer(tap)
-        // MARK: Ajuste para cenario do coreData
-//        view.isHidden = true
         return view
     }()
     

@@ -8,7 +8,6 @@
 import Foundation
 import FirebaseAuth
 import FirebaseFirestore
-import CoreData
 
 protocol StartViewModelProtocol {
     func validate()

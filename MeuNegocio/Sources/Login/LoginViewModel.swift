@@ -7,7 +7,6 @@
 
 import FirebaseAuth
 import FirebaseCore
-import CoreData
 import FirebaseFirestore
 
 protocol LoginViewModelProtocol: AnyObject {
