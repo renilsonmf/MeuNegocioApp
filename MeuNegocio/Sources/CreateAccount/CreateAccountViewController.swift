@@ -63,7 +63,7 @@ class CreateAccountViewController: CoordinatedViewController {
         if self.authUser != nil && Current.shared.isEmailVerified.not {
             self.authUser!.sendEmailVerification() { (error) in
                 self.showAlert(title: "Parabéns!",
-                               messsage: "Conta criada com sucesso. \n Foi enviado para seu email um link de verificação. Após verificar, retorne ao app para efetuar o login. \n Verifique sua caixa de spam.") {
+                               messsage: "Conta criada com sucesso. \nFoi enviado para seu email um link de verificação. Após verificar, retorne ao app para efetuar o login. \nVerifique sua caixa de spam.") {
                     self.viewModel.closed()
                 }
             }

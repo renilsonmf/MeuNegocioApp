@@ -30,7 +30,7 @@ extension UIViewController {
     
     func showDeleteAlert(
         title: String = "Atenção!",
-        messsage: String = "Deseja deletar este procedimento?\n Esta ação é irreversível.",
+        messsage: String = "Deseja deletar este procedimento? \nEsta ação é irreversível.",
         closedScreen: Bool = false,
         completion: @escaping () -> Void? = { nil }
     ) {

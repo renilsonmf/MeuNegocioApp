@@ -5,12 +5,11 @@
 //  Created by Renilson Moreira on 02/09/22.
 //
 import FirebaseAuth
-import CoreData
+import FirebaseFirestore
 
 protocol ProfileViewModelProtocol {
     func signOut(resultSignOut: (Bool) -> Void)
-    func deleteDatabaseData(completion: @escaping (Bool) -> Void)
-    func deleteCoreData(completion: @escaping (Bool) -> Void)
+    func deleteUserAccount(completion: @escaping (Bool) -> Void)
     func logout()
 }
 
@@ -18,43 +17,48 @@ class ProfileViewModel: ProfileViewModelProtocol {
     
     // MARK: - Properties
     private var coordinator: ProfileCoordinator?
-    private let user = Auth.auth().currentUser
-
     
     // MARK: - Init
     init(coordinator: ProfileCoordinator?) {
         self.coordinator = coordinator
     }
     
-    func deleteDatabaseData(completion: @escaping (Bool) -> Void) {
-        let deleteAccountByEmail = MNUserDefaults.getRemoteConfig()?.deleteAccountByEmail ?? "http://54.86.122.10:3000/procedure/delete-account/"
-        guard let email = Auth.auth().currentUser?.email else { return }
-        guard let url = URL(string: "\(deleteAccountByEmail)\(email)") else {
-            print("Error: cannot create URL")
+    func deleteUserAccount(completion: @escaping (Bool) -> Void) {
+        
+        guard let user = Auth.auth().currentUser else {
+            completion(false)
             return
         }
-        var urlReq = URLRequest(url: url)
-        urlReq.httpMethod = "DELETE"
-        URLSession.shared.dataTask(with: urlReq) { data, response, error in
-            if let response = response as? HTTPURLResponse {
-                if response.statusCode == 200 {
-                    DispatchQueue.main.async {
-                        self.user?.delete{ errorFirebase in
-                            if error != nil {
-                                print(errorFirebase?.localizedDescription)
+        
+        let uid = user.uid
+        let db = Firestore.firestore()
+        
+        db.collection("users")
+            .document(uid)
+            .collection("procedures")
+            .getDocuments { snapshot, _ in
+                
+                let batch = db.batch()
+                
+                snapshot?.documents.forEach {
+                    batch.deleteDocument($0.reference)
+                }
+                
+                batch.commit { _ in
+                    db.collection("users").document(uid).delete { _ in
+                        user.delete { error in
+                            if let error = error {
+                                print("Erro ao deletar auth:", error)
+                                completion(false)
                             } else {
-                                print("Conta deletada com sucesso")
                                 completion(true)
                             }
                         }
                     }
-                } else {
-                    completion(false)
                 }
             }
-   
-        }.resume()
     }
+    
     
     func signOut(resultSignOut: (Bool) -> Void) {
         let firebaseAuth = Auth.auth()
@@ -70,28 +74,5 @@ class ProfileViewModel: ProfileViewModelProtocol {
     func logout() {
         KeychainService.deleteCredentials()
         coordinator?.closed()
-    }
-}
-
-// Core Data
-extension ProfileViewModel {
-    func deleteCoreData(completion: @escaping (Bool) -> Void) {
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Profile")
-        
-        let context = CoreDataManager.shared.managedObjectContext
-        
-        do {
-            let objects = try context.fetch(fetchRequest)
-            
-            for case let object as NSManagedObject in objects {
-                context.delete(object)
-            }
-            
-            try context.save()
-            completion(true)
-            
-        } catch {
-            completion(false)
-        }
     }
 }

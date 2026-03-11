@@ -57,10 +57,10 @@ class ProfileViewController: CoordinatedViewController {
     private func deleteAccount() {
         self.showDeleteAlert(
             title: "Essa ação é irreversível",
-            messsage: "Todos os seus dados serão removidos. \n  Tem certeza que deseja deletar sua conta?",
+            messsage: "Todos os seus dados serão removidos. \nTem certeza que deseja deletar sua conta?",
             closedScreen: false
         ) {
-            self.viewModel.deleteCoreData { [ weak self ] delete in
+            self.viewModel.deleteUserAccount { [ weak self ] delete in
                 DispatchQueue.main.async {
                     delete ? self?.viewModel.logout() : self?.showAlert(
                         title: "Ocorreu um erro ao excluir sua conta",
@@ -79,7 +79,7 @@ class ProfileViewController: CoordinatedViewController {
             self.authUser!.sendEmailVerification(completion: { (error) in
                 self.showAlert(
                     title: "Atenção!",
-                    messsage: "Foi enviado para seu email um link para verificar a sua conta.\n Verifique sua caixa de spam."
+                    messsage: "Foi enviado para seu email um link para verificar a sua conta. \nVerifique sua caixa de spam."
                 )
             })
         } else { self.showAlert() }
