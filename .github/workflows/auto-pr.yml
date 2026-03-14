@@ -6,23 +6,19 @@ on:
       - 'feature/**'
 
 jobs:
-  create-pull-request:
+  create-pr:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: develop
-          branch: ${{ github.ref_name }}
-          title: "${{ github.event.head_commit.message }}"
-          body: |
-            PR criado automaticamente 🤖
-
-            Branch: ${{ github.ref_name }}
-
-            Revisar alterações antes do merge.
+        run: |
+          gh pr create \
+            --base develop \
+            --head ${{ github.ref_name }} \
+            --title "[FEATURE] - ${{ github.event.head_commit.message }}" \
+            --body "PR criado automaticamente"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
