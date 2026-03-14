@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - 'feature/**'
+      - 'bugfix/**'
+      - 'hotfix/**'
 
 jobs:
   create-pr:
@@ -13,12 +15,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Detect branch type
+        id: branch
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+
+          if [[ $BRANCH_NAME == feature/* ]]; then
+            echo "TYPE=FEATURE" >> $GITHUB_OUTPUT
+          elif [[ $BRANCH_NAME == bugfix/* ]]; then
+            echo "TYPE=BUGFIX" >> $GITHUB_OUTPUT
+          elif [[ $BRANCH_NAME == hotfix/* ]]; then
+            echo "TYPE=HOTFIX" >> $GITHUB_OUTPUT
+          else
+            echo "TYPE=UPDATE" >> $GITHUB_OUTPUT
+          fi
+
       - name: Create Pull Request
         run: |
           gh pr create \
             --base develop \
             --head ${{ github.ref_name }} \
-            --title "[FEATURE] - ${{ github.event.head_commit.message }}" \
-            --body "PR criado automaticamente"
+            --title "[${{ steps.branch.outputs.TYPE }}] - ${{ github.event.head_commit.message }}" \
+            --body "## Descrição
+
+${{ github.event.head_commit.message }}
+
+## Branch
+${{ github.ref_name }}
+
+PR criado automaticamente 🤖"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
