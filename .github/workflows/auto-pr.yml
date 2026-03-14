@@ -31,18 +31,21 @@ jobs:
           fi
 
       - name: Create Pull Request
+        env:
+          TITLE: ${{ github.event.head_commit.message }}
+          TYPE: ${{ steps.branch.outputs.TYPE }}
+          BRANCH: ${{ github.ref_name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr create \
             --base develop \
-            --head ${{ github.ref_name }} \
-            --title "[${{ steps.branch.outputs.TYPE }}] - ${{ github.event.head_commit.message }}" \
+            --head "$BRANCH" \
+            --title "[$TYPE] - $TITLE" \
             --body "## Descrição
 
-${{ github.event.head_commit.message }}
+$TITLE
 
 ## Branch
-${{ github.ref_name }}
+$BRANCH
 
 PR criado automaticamente 🤖"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
