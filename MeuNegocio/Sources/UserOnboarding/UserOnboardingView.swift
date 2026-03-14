@@ -172,7 +172,7 @@ class UserOnboardingView: MNView {
         if isSomeEmptyField() {
             delegate?.alertEmptyField()
         } else {
-            guard let email = Auth.auth().currentUser?.email else { return }
+            let email = Auth.auth().currentUser?.email ?? ""
             delegate?.addUserOnboarding(model: CreateUserModel(
                 name: nameTextField.text ?? .stringEmpty,
                 barbershop: barbershopTextField.text ?? .stringEmpty,
@@ -248,12 +248,4 @@ extension UserOnboardingView: UITextFieldDelegate {
         }
         return newString.count <= maxLength
     }
-    
-//    func textFieldDidBeginEditing(_ textField: UITextField) {
-//        self.activeTextField = textField
-//    }
-//
-//    func textFieldDidEndEditing(_ textField: UITextField) {
-//        self.activeTextField = nil
-//    }
 }

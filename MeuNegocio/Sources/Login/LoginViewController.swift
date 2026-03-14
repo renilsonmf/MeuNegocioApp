@@ -70,16 +70,16 @@ class LoginViewController: CoordinatedViewController {
             return
         }
         self.customView.loginButton.loadingIndicator(show: false)
-        viewModel.fetchUser { [ weak self ] result in
+        viewModel.fetchUser { [ weak self ] user in
             DispatchQueue.main.async {
                 MNUserDefaults.remove(key: MNKeys.emailNewUser)
-                if result.isEmpty {
-                    self?.viewModel.navigateToUserOnboarding()
-                } else {
+                if let user {
                     KeychainService.saveCredentials(email: email, password: password)
                     self?.viewModel.navigateToHome()
                     guard let email = Auth.auth().currentUser?.email else { return }
                     MNUserDefaults.set(value: true, forKey: email)
+                } else {
+                    self?.viewModel.navigateToUserOnboarding()
                 }
             }
         }
@@ -102,9 +102,20 @@ extension LoginViewController: LoginScreenActionsProtocol {
     }
     
     func didTapSignInGoogle() {
-        GIDSignIn.sharedInstance()?.presentingViewController = self
-        GIDSignIn.sharedInstance()?.delegate = self
-        GIDSignIn.sharedInstance().signIn()
+        
+        GIDSignIn.sharedInstance.signIn(withPresenting: self) { signInResult, error in
+            guard let result = signInResult else {
+                // Inspect error
+                print("Error signing in: \(error?.localizedDescription ?? "No error description")")
+                self.showError("Tente novamente")
+                return
+            }
+            
+            // If sign in succeeded, print the ID token.
+            
+            print("ID Token: \(result.user.idToken?.tokenString ?? "")")
+            self.checkNewUser()
+        }
     }
     
     func didTapSignInApple() {
@@ -123,20 +134,20 @@ extension LoginViewController: LoginScreenActionsProtocol {
 }
 
 // MARK: - Login com o google
-extension LoginViewController: GIDSignInDelegate {
-    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
-        if error != nil {
-            return
-        }
-        
-        guard let auth = user.authentication else { return }
-        let credentials = GoogleAuthProvider.credential(withIDToken: auth.idToken, accessToken: auth.accessToken)
-        
-        viewModel.authLoginGoogle(credentials: credentials) { [ weak self ] result in
-            result ? self?.checkNewUser() : self?.showError("Tente novamente")
-        }
-    }
-}
+//extension LoginViewController: GIDSignInDelegate {
+//    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+//        if error != nil {
+//            return
+//        }
+//        
+//        guard let auth = user.authentication else { return }
+//        let credentials = GoogleAuthProvider.credential(withIDToken: auth.idToken, accessToken: auth.accessToken)
+//        
+//        viewModel.authLoginGoogle(credentials: credentials) { [ weak self ] result in
+//            result ? self?.checkNewUser() : self?.showError("Tente novamente")
+//        }
+//    }
+//}
 
 // MARK: Login com a Apple
 extension LoginViewController: ASAuthorizationControllerDelegate {
@@ -159,9 +170,13 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             }
 
             // Initialize a Firebase credential.
-            let credential = OAuthProvider.credential(withProviderID: "apple.com",
-                                                      idToken: idTokenString,
-                                                      rawNonce: nonce)
+//            let credential = OAuthProvider.credential(withProviderID: "apple.com",
+//                                                      idToken: idTokenString,
+//                                                      rawNonce: nonce)
+            
+            let credential = OAuthProvider.appleCredential(withIDToken: idTokenString,
+                                                           rawNonce: nonce,
+                                                           fullName: appleIDCredential.fullName)
             // Sign in with Firebase.
             viewModel.authLoginApple(credentials: credential) { [weak self] result in
                 result ? self?.checkNewUser() : self?.showError("Tente novamente")

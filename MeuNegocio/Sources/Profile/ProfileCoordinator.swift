@@ -8,7 +8,7 @@
 import UIKit
 
 class ProfileCoordinator: BaseCoordinator {
-    func start(userData: UserModelList) {
+    func start(userData: UserModel?) {
         let viewModel = ProfileViewModel(coordinator: self)
         let controller = ProfileViewController(viewModel: viewModel, coordinator: self, userData: userData)
         configuration.viewController = controller

@@ -4,42 +4,93 @@
 //
 //  Created by Renilson Moreira on 30/09/22.
 //
-import Foundation
 import FirebaseAuth
-
+import FirebaseFirestore
 
 protocol HomeServiceProtocol {
-    func getProcedureList(completion: @escaping ([GetProcedureModel]) -> Void)
     func deleteProcedure(_ procedure: String, completion: @escaping () -> Void)
-    func fetchUser(completion: @escaping (UserModelList) -> Void)
+    func fetchUserFirestore(completion: @escaping (UserModel?) -> Void)
+    func getProcedureListFirestore(completion: @escaping ([GetProcedureModel]) -> Void)
 }
 
 class HomeService: HomeServiceProtocol {
+    
+    private let firesore = Firestore.firestore()
 
-    // Get procedure list
-    func getProcedureList(completion: @escaping ([GetProcedureModel]) -> Void) {
-        guard let email = Auth.auth().currentUser?.email else { return }
-
-        let urlString = "http://54.86.122.10:3000/procedure/\(email)"
-        guard let url = URL(string: urlString) else { return }
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            guard let data = data else { return }
-            do {
-                let result = try JSONDecoder().decode([GetProcedureModel].self, from: data)
-                DispatchQueue.main.async {
-                    completion(result)
+    func fetchUserFirestore(completion: @escaping (UserModel?) -> Void) {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            completion(nil)
+            return
+        }
+        
+        firesore.collection("users")
+            .document(uid)
+            .getDocument { snapshot, error in
+                if let snapshot = snapshot, snapshot.exists {
+                    let data = snapshot.data() ?? [:]
+                    let user = UserModel(
+                        name: data["name"] as? String ?? "",
+                        barbershop: data["barbershop"] as? String ?? "",
+                        city: data["city"] as? String ?? "",
+                        state: data["state"] as? String ?? "",
+                        email: data["email"] as? String ?? ""
+                    )
+                    completion(user)
+                } else {
+                    completion(nil)
                 }
             }
-            catch {
-                let error = error
-                print(error)
-            }
-        }.resume()
     }
-
-    // Delete procedure
+    
+    func getProcedureListFirestore(completion: @escaping ([GetProcedureModel]) -> Void) {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            completion([])
+            return
+        }
+        
+        firesore.collection("users")
+            .document(uid)
+            .collection("procedures")
+            .order(by: "createdAt", descending: true)
+            .getDocuments { snapshot, error in
+                
+                guard let documents = snapshot?.documents else {
+                    completion([])
+                    return
+                }
+                
+                let procedures: [GetProcedureModel] = documents.map { doc in
+                    
+                    let data = doc.data()
+                    let value = data["value"] as? String ?? ""
+                    let costs = data["costs"] as? String ?? ""
+                    let valueLiquid = (Double(value) ?? 0) - (Double(costs) ?? 0)
+                    
+                    return GetProcedureModel(
+                        _id: data["id"] as? String ?? "",
+                        nameClient: data["nameClient"] as? String ?? "",
+                        typeProcedure: data["typeProcedure"] as? String ?? "",
+                        formPayment: PaymentMethodType(
+                            rawValue: data["formPayment"] as? String ?? ""
+                        ) ?? .other,
+                        value: value,
+                        currentDate: data["currentDate"] as? String ?? "",
+                        email: data["email"] as? String ?? "",
+                        costs: costs,
+                        valueLiquid: String(valueLiquid)
+                    )
+                }
+                completion(procedures)
+            }
+    }
+    
     func deleteProcedure(_ procedure: String, completion: @escaping () -> Void) {
-        guard let url = URL(string: "http://54.86.122.10:3000/procedure/\(procedure)") else {
+        
+        let deleteProcedureById = MNUserDefaults.getRemoteConfig()?.deleteProcedureById ?? "http://54.86.122.10:3000/procedure/"
+        
+        let urlString = "\(deleteProcedureById)\(procedure)"
+        
+        guard let url = URL(string: urlString) else {
             print("Error: cannot create URL")
             return
         }
@@ -47,24 +98,6 @@ class HomeService: HomeServiceProtocol {
         urlReq.httpMethod = "DELETE"
         URLSession.shared.dataTask(with: urlReq) { _, _, _ in
             completion()
-        }.resume()
-    }
-    
-    func fetchUser(completion: @escaping (UserModelList) -> Void) {
-        guard let email = Auth.auth().currentUser?.email else { return }
-
-        let urlString = "http://54.86.122.10:3000/profile/\(email)"
-        guard let url = URL(string: urlString) else { return }
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            guard let data = data else { return }
-            do {
-                let result = try JSONDecoder().decode(UserModelList.self, from: data)
-                completion(result)
-            }
-            catch {
-                let error = error
-                print(error)
-            }
         }.resume()
     }
 }

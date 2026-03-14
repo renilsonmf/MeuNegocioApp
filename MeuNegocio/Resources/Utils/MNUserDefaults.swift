@@ -53,6 +53,21 @@ public class MNUserDefaults {
         return defaults.string(forKey: stringForKey)
     }
     
+    //Fixme
+    public static func getRemoteConfig() -> ListKeysRemoteConfig? {
+        guard let data = defaults.object(forKey: "urlEndpoints") as? Data else { return nil }
+        let items = try? JSONDecoder().decode(ListKeysRemoteConfig.self, from: data)
+        return items
+    }
+    
+    public static func setRemoteConfig(model: ListKeysRemoteConfig?) {
+        let encoder = JSONEncoder()
+        if let encoded = try? encoder.encode(model) {
+            defaults.set(encoded, forKey: "urlEndpoints")
+            defaults.synchronize()
+        }
+    }
+    
     // MARK: - Remove
     public static func remove(key: String) {
         defaults.removeObject(forKey: key)

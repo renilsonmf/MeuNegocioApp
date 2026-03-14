@@ -123,9 +123,10 @@ final class ProcedureDetailView: UIView {
     
     func setupView(procedure: GetProcedureModel) {
         self.procedure = procedure
-        let amountLiquid = Double(procedure.valueLiquid ?? procedure.value) ?? 0.0
+    
         let amountTotal = Double(procedure.value) ?? 0.0
         let amountCosts = Double(procedure.costs ?? .stringEmpty) ?? 0.0
+        let amountLiquid = amountTotal - amountCosts
         
         clientLabel.configureView(title: "Cliente:", subtitle: procedure.nameClient)
         procedureLabel.configureView(title: "Procedimento:", subtitle: procedure.typeProcedure)

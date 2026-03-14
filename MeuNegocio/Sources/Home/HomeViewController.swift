@@ -12,7 +12,7 @@ final class HomeViewController: CoordinatedViewController {
     // MARK: - Properties
     private let viewModel: HomeViewModelProtocol
     private var procedures: [GetProcedureModel] = []
-    private var userData: UserModelList = []
+    private var userData: UserModel? = nil
 
     // MARK: - View
     private lazy var customView = HomeView(
@@ -57,7 +57,7 @@ final class HomeViewController: CoordinatedViewController {
     }
 
     private func bindProperties() {
-        viewModel.input.viewDidLoad()
+        viewModel.input.loadHome()
         viewModel.output.procedures.bind() { [weak self] result in
             self?.customView.procedures = result.reversed()
             self?.procedures = result.reversed()
@@ -65,12 +65,11 @@ final class HomeViewController: CoordinatedViewController {
                 totalValues: self?.viewModel.input.makeTotalAmounts(result),
                 procedureValue: "\(result.count)")
             self?.customView.totalReceiptCard.loadingIndicatorView(show: false)
-            self?.openRateApp()
         }
         
-        viewModel.output.userData.bind { [weak self] result in
-            self?.userData = result
-            self?.customView.userName = result.first?.name ?? ""
+        viewModel.output.userData.bind { [weak self] user in
+            self?.userData = user
+            self?.customView.userName = user?.name ?? ""
         }
         
         reloadData()

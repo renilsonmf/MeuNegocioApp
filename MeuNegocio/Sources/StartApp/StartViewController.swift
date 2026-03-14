@@ -11,7 +11,7 @@ import Lottie
 class StartViewController: CoordinatedViewController {
     
     private let viewModel: StartViewModelProtocol
-    private var animationView: AnimationView?
+    private var animationView: LottieAnimationView?
     
     init(viewModel: StartViewModelProtocol, coordinator: CoordinatorProtocol){
         self.viewModel = viewModel

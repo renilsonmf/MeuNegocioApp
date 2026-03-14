@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseAuth
+import FirebaseFirestore
 
 protocol StartViewModelProtocol {
     func validate()
@@ -53,5 +54,34 @@ class StartViewModel: StartViewModelProtocol {
             self.coordinator?.navigateToLogin()
         }
     }
-}
 
+    func fetchUser(completion: @escaping (UserModel?) -> Void) {
+        
+        guard let uid = Auth.auth().currentUser?.uid else {
+            completion(nil)
+            return
+        }
+
+        let db = Firestore.firestore()
+
+        db.collection("users")
+            .document(uid)
+            .getDocument { snapshot, error in
+                
+                guard let data = snapshot?.data(), error == nil else {
+                    completion(nil)
+                    return
+                }
+
+                let user = UserModel(
+                    name: data["name"] as? String ?? "",
+                    barbershop: data["barbershop"] as? String ?? "",
+                    city: data["city"] as? String ?? "",
+                    state: data["state"] as? String ?? "",
+                    email: data["email"] as? String ?? ""
+                )
+
+                completion(user)
+            }
+    }
+}

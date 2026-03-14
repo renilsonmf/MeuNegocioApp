@@ -48,7 +48,7 @@ class CheckYourAccountController: CoordinatedViewController {
             self.authUser!.sendEmailVerification() { (error) in
                 self.showAlert(
                     title: "Atenção!",
-                    messsage: "Foi enviado para seu email um link de verificação. Após verificar, retorne ao app para efetuar o login. \n Verifique sua caixa de spam."
+                    messsage: "Foi enviado para seu email um link de verificação. Após verificar, retorne ao app para efetuar o login. \nVerifique sua caixa de spam."
                 ) {self.customView.verifiedEmailButton.loadingIndicator(show: false)}
             }
         } else {

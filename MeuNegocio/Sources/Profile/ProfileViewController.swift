@@ -17,9 +17,9 @@ class ProfileViewController: CoordinatedViewController {
     )
 
     private let viewModel: ProfileViewModelProtocol
-    private let userData: UserModelList
+    private var userData: UserModel? = nil
     
-    init(viewModel: ProfileViewModelProtocol, coordinator: CoordinatorProtocol, userData: UserModelList){
+    init(viewModel: ProfileViewModelProtocol, coordinator: CoordinatorProtocol, userData: UserModel?){
         self.viewModel = viewModel
         self.userData = userData
         super.init(coordinator: coordinator)
@@ -42,25 +42,27 @@ class ProfileViewController: CoordinatedViewController {
     }
     
     private func setUserData() {
-        self.customView.user = userData.first
+        self.customView.user = userData
     }
     
     private func logout() {
-        viewModel.signOut { [ weak self ] result in
-            result ? self?.viewModel.logout() : self?.showAlert(
-                title: "Ocorreu um erro",
-                messsage: "Tente novamente mais tarde"
-            )
+        self.showDeleteAlert(title: "Tem certeza que deseja sair?", messsage: "", titleSecondaryButton: "Sair") {
+            self.viewModel.signOut { [ weak self ] result in
+                result ? self?.viewModel.logout() : self?.showAlert(
+                    title: "Ocorreu um erro",
+                    messsage: "Tente novamente mais tarde"
+                )
+            }
         }
     }
     
     private func deleteAccount() {
         self.showDeleteAlert(
             title: "Essa ação é irreversível",
-            messsage: "Todos os seus dados serão removidos. \n  Tem certeza que deseja deletar sua conta?",
+            messsage: "Todos os seus dados serão removidos. \nTem certeza que deseja deletar sua conta?",
             closedScreen: false
         ) {
-            self.viewModel.deleteDatabaseData { [ weak self ] delete in
+            self.viewModel.deleteUserAccount { [ weak self ] delete in
                 DispatchQueue.main.async {
                     delete ? self?.viewModel.logout() : self?.showAlert(
                         title: "Ocorreu um erro ao excluir sua conta",
@@ -79,7 +81,7 @@ class ProfileViewController: CoordinatedViewController {
             self.authUser!.sendEmailVerification(completion: { (error) in
                 self.showAlert(
                     title: "Atenção!",
-                    messsage: "Foi enviado para seu email um link para verificar a sua conta.\n Verifique sua caixa de spam."
+                    messsage: "Foi enviado para seu email um link para verificar a sua conta. \nVerifique sua caixa de spam."
                 )
             })
         } else { self.showAlert() }

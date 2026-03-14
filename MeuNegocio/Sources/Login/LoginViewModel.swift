@@ -7,12 +7,13 @@
 
 import FirebaseAuth
 import FirebaseCore
+import FirebaseFirestore
 
 protocol LoginViewModelProtocol: AnyObject {
     func authLogin(_ email: String, _ password: String, resultLogin: @escaping (Bool, String) -> Void)
     func authLoginGoogle(credentials: AuthCredential, resultAuth: @escaping (Bool) -> Void)
     func authLoginApple(credentials: AuthCredential, resultAuth: @escaping (Bool) -> Void)
-    func fetchUser(completion: @escaping (UserModelList) -> Void)
+    func fetchUser(completion: @escaping (UserModel?) -> Void)
     func navigateToHome()
     func navigateToUserOnboarding()
     func navigateToForgotPassword(email: String)
@@ -24,6 +25,7 @@ class LoginViewModel: LoginViewModelProtocol {
     
     // MARK: - Properties
     private var coordinator: LoginCoordinator?
+    private let db = Firestore.firestore()
     
     // MARK: - Init
     init(coordinator: LoginCoordinator?) {
@@ -64,23 +66,36 @@ class LoginViewModel: LoginViewModelProtocol {
             }
         }
     }
-    
-    func fetchUser(completion: @escaping (UserModelList) -> Void) {
-        guard let email = Auth.auth().currentUser?.email else { return }
 
-        let urlString = "http://54.86.122.10:3000/profile/\(email)"
-        guard let url = URL(string: urlString) else { return }
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            guard let data = data else { return }
-            do {
-                let result = try JSONDecoder().decode(UserModelList.self, from: data)
-                completion(result)
+    func fetchUser(completion: @escaping (UserModel?) -> Void) {
+        
+        guard let uid = Auth.auth().currentUser?.uid else {
+            completion(nil)
+            return
+        }
+        
+        db.collection("users")
+            .document(uid)
+            .getDocument { snapshot, error in
+                
+                if let snapshot = snapshot, snapshot.exists {
+                    
+                    let data = snapshot.data() ?? [:]
+                    
+                    let user = UserModel(
+                        name: data["name"] as? String ?? "",
+                        barbershop: data["barbershop"] as? String ?? "",
+                        city: data["city"] as? String ?? "",
+                        state: data["state"] as? String ?? "",
+                        email: data["email"] as? String ?? ""
+                    )
+                    
+                    completion(user)
+                    
+                } else {
+                    completion(nil)
+                }
             }
-            catch {
-                let error = error
-                print(error)
-            }
-        }.resume()
     }
     
     private func descriptionError(error: NSError) -> String {

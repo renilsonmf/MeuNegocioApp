@@ -4,25 +4,55 @@ on:
   push:
     branches:
       - 'feature/**'
+      - 'bugfix/**'
+      - 'hotfix/**'
 
 jobs:
-  create-pull-request:
+  create-pr:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Detect branch type
+        id: branch
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+
+          if [[ $BRANCH_NAME == feature/* ]]; then
+            echo "TYPE=FEATURE" >> $GITHUB_OUTPUT
+          elif [[ $BRANCH_NAME == bugfix/* ]]; then
+            echo "TYPE=BUGFIX" >> $GITHUB_OUTPUT
+          elif [[ $BRANCH_NAME == hotfix/* ]]; then
+            echo "TYPE=HOTFIX" >> $GITHUB_OUTPUT
+          else
+            echo "TYPE=UPDATE" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get commit message
+        id: commit
+        run: |
+          echo "MESSAGE=$(git log -1 --pretty=%s)" >> $GITHUB_OUTPUT
+
+      - name: Check if PR already exists
+        id: checkpr
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR=$(gh pr list --head "${{ github.ref_name }}" --base develop --json number --jq 'length')
+          echo "EXISTS=$PR" >> $GITHUB_OUTPUT
+
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: develop
-          branch: ${{ github.ref_name }}
-          title: "${{ github.event.head_commit.message }}"
-          body: |
-            PR criado automaticamente 🤖
-
-            Branch: ${{ github.ref_name }}
-
-            Revisar alterações antes do merge.
+        if: steps.checkpr.outputs.EXISTS == '0'
+        env:
+          TYPE: ${{ steps.branch.outputs.TYPE }}
+          MESSAGE: ${{ steps.commit.outputs.MESSAGE }}
+          BRANCH: ${{ github.ref_name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base develop \
+            --head "$BRANCH" \
+            --title "[$TYPE] - $MESSAGE" \
+            --body "PR criado automaticamente"

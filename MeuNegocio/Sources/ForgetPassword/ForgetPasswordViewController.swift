@@ -53,7 +53,7 @@ class ForgetPasswordViewController: CoordinatedViewController {
     private func isEmailWasSent( _ result: Bool, _ error: String = .stringEmpty) {
         if result {
             showAlert(title: "Atenção",
-                      messsage: "Foi enviado um link para redefinir a sua senha no email cadastrado.\n Verifique sua caixa de spam.",
+                      messsage: "Foi enviado um link para redefinir a sua senha no email cadastrado. \nVerifique sua caixa de spam.",
                       completion: { self.dismiss(animated: true) })
         } else {
             showAlert(title: "Ops!", messsage: error)

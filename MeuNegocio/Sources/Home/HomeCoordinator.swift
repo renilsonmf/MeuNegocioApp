@@ -9,7 +9,7 @@ import UIKit
 
 enum TypeScreen {
     case Report([GetProcedureModel])
-    case Profile(UserModelList)
+    case Profile(UserModel?)
     case AddProcedure
     case Help
     case detailProcedure(GetProcedureModel)
@@ -43,7 +43,7 @@ extension HomeCoordinator {
         ReportCoordinator(with: configuration).start(procedures: procedures)
     }
 
-    private func openProfile(userData: UserModelList) {
+    private func openProfile(userData: UserModel?) {
         ProfileCoordinator(with: configuration).start(userData: userData)
     }
 
