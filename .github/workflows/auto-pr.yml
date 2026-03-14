@@ -37,15 +37,20 @@ jobs:
           BRANCH: ${{ github.ref_name }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr create \
-            --base develop \
-            --head "$BRANCH" \
-            --title "[$TYPE] - $TITLE" \
-            --body "## Descrição
+          BODY=$(cat <<EOF
+## Descrição
 
 $TITLE
 
 ## Branch
 $BRANCH
 
-PR criado automaticamente 🤖"
+PR criado automaticamente 🤖
+EOF
+)
+
+          gh pr create \
+            --base develop \
+            --head "$BRANCH" \
+            --title "[$TYPE] - $TITLE" \
+            --body "$BODY"
