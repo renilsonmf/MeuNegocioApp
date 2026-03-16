@@ -20,18 +20,18 @@ class TotalReceiptCardView: CardView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private lazy var totalLabel = MNLabel(text: "Valor total líquido") .. {
+    private lazy var totalLabel = MNLabel(text: "Total faturado") .. {
         $0.font = UIFont.boldSystemFont(ofSize: 15)
         $0.textColor = .MNColors.grayDescription
     }
 
     private(set) lazy var totalValueLabel = MNLabel() .. {
         $0.text = "R$ 00,00"
-        $0.font = UIFont.boldSystemFont(ofSize: 20)
+        $0.font = UIFont.boldSystemFont(ofSize: 18)
     }
 
     private lazy var proceduresLabel = MNLabel() .. {
-        $0.text = "Procedimentos"
+        $0.text = "Atendimentos"
         $0.textAlignment = .right
         $0.font = UIFont.boldSystemFont(ofSize: 15)
         $0.textColor = .MNColors.grayDescription
@@ -40,11 +40,12 @@ class TotalReceiptCardView: CardView {
     private(set) lazy var proceduresValueLabel = MNLabel() .. {
         $0.text = "0"
         $0.textAlignment = .right
-        $0.font = UIFont.boldSystemFont(ofSize: 20)
+        $0.font = UIFont.boldSystemFont(ofSize: 18)
     }
     
     // MARK: Private methods
-    func setupCardValues(totalValues: String?, procedureValue: String) {
+    func setupCardValues(title: String, totalValues: String?, procedureValue: String) {
+        totalLabel.text = title
         totalValueLabel.text = totalValues
         proceduresValueLabel.text = procedureValue
     }
@@ -65,7 +66,7 @@ extension TotalReceiptCardView: ViewCodeContract {
         totalLabel
             .topAnchor(in: self, padding: 20)
             .leftAnchor(in: self, padding: 20)
-            .widthAnchor(150)
+//            .widthAnchor(150)
 
         totalValueLabel
             .topAnchor(in: totalLabel, attribute: .bottom, padding: 2)
@@ -75,7 +76,7 @@ extension TotalReceiptCardView: ViewCodeContract {
         proceduresLabel
             .topAnchor(in: self, padding: 20)
             .rightAnchor(in: self, padding: 20)
-            .widthAnchor(150)
+//            .widthAnchor(150)
 
         proceduresValueLabel
             .topAnchor(in: proceduresLabel, attribute: .bottom, padding: 2)

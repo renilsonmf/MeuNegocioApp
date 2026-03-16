@@ -7,30 +7,52 @@
 
 import UIKit
 
-enum ButtonFilterType: String {
-    case all = "Todos"
-    case today = "Hoje"
-    case sevenDays = "7 dias"
-    case thirtyDays = "Este mês"
-    case custom = "Personalizado"
+enum ButtonFilterType: Equatable {
+    case all
+    case today
+    case sevenDays
+    case thirtyDays
+    case custom(start: Date?)
+    
+    var titleFilter: String {
+        switch self {
+        case .all: return "Todos"
+        case .today: return "Hoje"
+        case .sevenDays: return "7 dias"
+        case .thirtyDays: return "Este mês"
+        case .custom: return "Personalizado"
+        }
+    }
+    
+    var resumeCardTitle: String {
+        switch self {
+        case .all: return "Total faturado"
+        case .today: return "Hoje você faturou"
+        case .sevenDays: return "Últimos 7 dias você faturou"
+        case .thirtyDays: return "Este mês você faturou"
+        case .custom(let start): return start?.toString(format: "dd MMM") ?? "Data selecionada"
+        }
+    }
 }
 
 final class FilterSegmentedControl: UIView, ViewCodeContract {
 
-    private var didSelectIndexClosure: (ButtonFilterType) -> Void?
-    private var didSelectDateClosure: (String) -> Void?
+    private var didSelectedFilter: (ButtonFilterType) -> Void
+//    private var didSelectDateClosure: (ButtonFilterType, String) -> Void
+    
+    private var buttonFilterMap: [UIButton: ButtonFilterType] = [:]
     
     var segmentedControlButtons: [UIButton] = []
     
-    let all = SegmentedControlButton(title: ButtonFilterType.all.rawValue)
-    let today = SegmentedControlButton(title: ButtonFilterType.today.rawValue)
-    let sevenDays = SegmentedControlButton(title: ButtonFilterType.sevenDays.rawValue)
-    let thirtyDays = SegmentedControlButton(title: ButtonFilterType.thirtyDays.rawValue)
-    let custom = SegmentedControlButton(title: ButtonFilterType.custom.rawValue)
+    let all = SegmentedControlButton(title: ButtonFilterType.all.titleFilter)
+    let today = SegmentedControlButton(title: ButtonFilterType.today.titleFilter)
+    let sevenDays = SegmentedControlButton(title: ButtonFilterType.sevenDays.titleFilter)
+    let thirtyDays = SegmentedControlButton(title: ButtonFilterType.thirtyDays.titleFilter)
+    let custom = SegmentedControlButton(title: ButtonFilterType.custom(start: nil).titleFilter)
 
     var currentIndexFilter: ButtonFilterType = .all {
         didSet {
-            if currentIndexFilter == .all {
+            if case .all = currentIndexFilter {
                 handleSegmentedControlButtons()
                 all.backgroundColor = .MNColors.lightBrown
             }
@@ -38,14 +60,20 @@ final class FilterSegmentedControl: UIView, ViewCodeContract {
     }
     
     // MARK: - Init
-    init(
-        didSelectIndexClosure: @escaping (ButtonFilterType) -> Void,
-        didSelectDateClosure: @escaping (String) -> Void
-    ) {
+    init(didSelectedFilter: @escaping (ButtonFilterType) -> Void) {
+        self.didSelectedFilter = didSelectedFilter
+        
         self.segmentedControlButtons = [all, today, sevenDays, thirtyDays, custom]
-        self.didSelectIndexClosure = didSelectIndexClosure
-        self.didSelectDateClosure = didSelectDateClosure
+        
         super.init(frame: .zero)
+        
+        buttonFilterMap = [
+            all: .all,
+            today: .today,
+            sevenDays: .sevenDays,
+            thirtyDays: .thirtyDays
+        ]
+        
         translatesAutoresizingMaskIntoConstraints = false
         setupView()
     }
@@ -53,6 +81,8 @@ final class FilterSegmentedControl: UIView, ViewCodeContract {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - Views
     
     private lazy var container: UIView = {
         let container = UIView()
@@ -82,11 +112,13 @@ final class FilterSegmentedControl: UIView, ViewCodeContract {
         date.datePickerMode = .date
         date.locale = Locale(identifier: "pt-BR")
         date.calendar = Calendar(identifier: .gregorian)
-        date.timeZone = TimeZone(identifier: "pt-BR")
+        date.timeZone = TimeZone(identifier: "America/Sao_Paulo")
         date.translatesAutoresizingMaskIntoConstraints = false
         return date
     }()
 
+    // MARK: - Setup
+    
     func setupHierarchy() {
         addSubview(container)
         container.addSubview(scrollView)
@@ -115,6 +147,7 @@ final class FilterSegmentedControl: UIView, ViewCodeContract {
     
     func setupConfiguration() {
         configurePickerView()
+        
         segmentedControlButtons.forEach {
             $0.addTarget(
                 self,
@@ -124,14 +157,18 @@ final class FilterSegmentedControl: UIView, ViewCodeContract {
         }
     }
 
+    // MARK: - Date Picker
+    
     func configurePickerView() {
         custom.addSubview(datePicker)
+        
         datePicker
             .topAnchor(in: custom)
             .leftAnchor(in: custom)
             .rightAnchor(in: custom)
             .heightAnchor(250)
             .bottomAnchor(in: custom)
+        
         datePicker.tintColor = .MNColors.grayDarkest
         datePicker.alpha = 0.02
         datePicker.isUserInteractionEnabled = true
@@ -139,14 +176,17 @@ final class FilterSegmentedControl: UIView, ViewCodeContract {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd/MM/yyyy"
         let minimumDate = formatter.date(from: "01/09/2022")
+        
         datePicker.minimumDate = minimumDate
         datePicker.calendar.locale = Locale(identifier: "pt-BR")
         datePicker.timeZone = TimeZone(identifier: "America/Sao_Paulo")
+        
         datePicker.addTarget(self, action: #selector(editingDidBeginPicker), for: .editingDidBegin)
         datePicker.addTarget(self, action: #selector(editingDidEndPicker(sender:)), for: .editingDidEnd)
     }
 
-    // MARK: - Actions methods
+    // MARK: - Actions
+    
     @objc
     func editingDidBeginPicker() {
         TrackEvent.track(event: .homeFilterCustom)
@@ -156,31 +196,47 @@ final class FilterSegmentedControl: UIView, ViewCodeContract {
 
     @objc
     func editingDidEndPicker(sender: UIDatePicker) {
+        
         let df = DateFormatter()
         df.dateFormat = "dd/MM/yyyy"
+        
         let dateString = df.string(from: sender.date)
-        self.didSelectDateClosure(dateString)
+        
         custom.setTitle(dateString, for: .normal)
+        
+        let filter = ButtonFilterType.custom(start: sender.date)
+        currentIndexFilter = filter
+        
+        didSelectedFilter(filter)
     }
 
     @objc
     func handleSegmentedControlButtons(sender: UIButton? = nil) {
+        
         for button in segmentedControlButtons {
+            
             if button == sender {
+                
                 button.backgroundColor = .MNColors.lightBrown
-                let title = button.titleLabel?.text ?? .stringEmpty
-                self.didSelectIndexClosure(ButtonFilterType(rawValue: title) ?? .all)
+                
+                if let filter = buttonFilterMap[button] {
+                    currentIndexFilter = filter
+                    didSelectedFilter(filter)
+                }
+                
             } else {
-                custom.setTitle("Personalizado", for: .normal)
-                button.backgroundColor = UIColor.init(white: 0.1, alpha: 0.1)
+                button.backgroundColor = UIColor(white: 0.1, alpha: 0.1)
             }
+        }
+        
+        if sender != custom {
+            custom.setTitle("Personalizado", for: .normal)
         }
     }
 }
 
 class SegmentedControlButton: UIButton {
 
-    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
@@ -189,17 +245,24 @@ class SegmentedControlButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Init
     init(title: String) {
         super.init(frame: .zero)
-        self.translatesAutoresizingMaskIntoConstraints = false
-        self.setTitle(title, for: .normal)
-        self.titleLabel?.font = .systemFont(ofSize: 14)
-        self.setTitleColor(.black, for: .normal)
-        self.backgroundColor = UIColor.init(white: 0.1, alpha: 0.1)
-        self.roundCorners(cornerRadius: 15)
-        self.contentEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
-        self.layer.borderColor = UIColor.black.cgColor
+        
+        translatesAutoresizingMaskIntoConstraints = false
+        setTitle(title, for: .normal)
+        titleLabel?.font = .systemFont(ofSize: 14)
+        setTitleColor(.black, for: .normal)
+        backgroundColor = UIColor(white: 0.1, alpha: 0.1)
+        
+        roundCorners(cornerRadius: 15)
+        
+        contentEdgeInsets = UIEdgeInsets(
+            top: 0,
+            left: 12,
+            bottom: 0,
+            right: 12
+        )
+        
+        layer.borderColor = UIColor.black.cgColor
     }
-
 }

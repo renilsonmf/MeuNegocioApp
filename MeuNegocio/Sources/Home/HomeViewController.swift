@@ -10,11 +10,13 @@ import UIKit
 final class HomeViewController: CoordinatedViewController {
     
     // MARK: - Properties
+    
     private let viewModel: HomeViewModelProtocol
     private var procedures: [GetProcedureModel] = []
     private var userData: UserModel? = nil
-
+    
     // MARK: - View
+    
     private lazy var customView = HomeView(
         navigateToReport: weakify { $0.viewModel.navigateToReport(procedures: $0.procedures)},
         alertAction: weakify { $0.showAlert()},
@@ -23,21 +25,22 @@ final class HomeViewController: CoordinatedViewController {
         navigateToHelp: weakify { $0.viewModel.navigateToHelp() },
         openProcedureDetails: weakify { $0.viewModel.openProcedureDetails($1) },
         didPullRefresh: weakify { $0.didPullToRefresh() },
-        didSelectIndexClosure: weakify { $0.didSelectFilter($1) },
-        didSelectDateClosure: weakify { $0.didSelectFilterDatePicker($1) }
+        didSelectedFilter: weakify { $0.didSelectFilter($1) },
     )
-
+    
     // MARK: - Init
+    
     init(viewModel: HomeViewModelProtocol, coordinator: CoordinatorProtocol){
         self.viewModel = viewModel
         super.init(coordinator: coordinator)
     }
-
+    
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view = customView
@@ -47,97 +50,132 @@ final class HomeViewController: CoordinatedViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
+        customView.currentIndexFilter = .all
         bindProperties()
-        self.customView.currentIndexFilter = .all
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: false)
     }
-
+    
+    // MARK: - Bind
+    
     private func bindProperties() {
+        
         viewModel.input.loadHome()
+        
         viewModel.output.procedures.bind() { [weak self] result in
-            self?.customView.procedures = result.reversed()
-            self?.procedures = result.reversed()
-            self?.customView.totalReceiptCard.setupCardValues(
-                totalValues: self?.viewModel.input.makeTotalAmounts(result),
-                procedureValue: "\(result.count)")
-            self?.customView.totalReceiptCard.loadingIndicatorView(show: false)
+            guard let self else { return }
+            
+            self.procedures = result.reversed()
+            
+            self.updateCardResume(with: self.procedures, title: "Faturamento total")
+            
+            self.customView.totalReceiptCard.loadingIndicatorView(show: false)
         }
         
         viewModel.output.userData.bind { [weak self] user in
             self?.userData = user
             self?.customView.userName = user?.name ?? ""
         }
+    }
+    
+    // MARK: - UI Update
+    
+    private func updateCardResume(with procedures: [GetProcedureModel], title: String) {
+        
+        customView.procedures = procedures
+        
+        customView.totalReceiptCard.setupCardValues(
+            title: title,
+            totalValues: viewModel.input.makeTotalAmounts(procedures),
+            procedureValue: "\(procedures.count)"
+        )
         
         reloadData()
     }
-
+    
+    // MARK: - Actions
+    
     private func didPullToRefresh() {
+        
         bindProperties()
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             self.customView.tableview.refreshControl?.endRefreshing()
             self.customView.currentIndexFilter = .all
             self.reloadData()
         }
     }
-
+    
     private func reloadData() {
-        self.customView.tableview.reloadData()
+        customView.tableview.reloadData()
     }
     
-    private func filteredProcedures(
-            procedures: [GetProcedureModel],
-            lastDays: Int = 0,
-            isMonthly: Bool = false
-    ) -> [GetProcedureModel] {
-        let lastDaysDates = isMonthly ? Date.getDatesOfCurrentMonth() : Date.getDates(forLastNDays: lastDays)
-        return procedures.filter({ lastDaysDates.contains($0.currentDate) })
+    // MARK: - Filter Logic
+    
+    private func didSelectFilter(_ type: ButtonFilterType) {
+        TrackEvent.track(event: type.trackEvent)
+        
+        let filtered = getFilteredProcedures(by: type)
+        
+        updateCardResume(
+            with: filtered,
+            title: type.resumeCardTitle
+        )
     }
     
-    func todayProcedures(procedures: [GetProcedureModel]) -> [GetProcedureModel] {
-        let procedures = procedures.filter({$0.currentDate == returnCurrentDate})
-        return procedures
+    private func getFilteredProcedures(by filter: ButtonFilterType) -> [GetProcedureModel] {
+        
+        switch filter {
+        case .all:
+            return procedures
+        case .today:
+            return procedures.filter { $0.currentDate == returnCurrentDate }
+        case .sevenDays:
+            let dates = Date.getDates(forLastNDays: 7)
+            return procedures.filter { dates.contains($0.currentDate) }
+        case .thirtyDays:
+            let dates = Date.getDatesOfCurrentMonth()
+            return procedures.filter { dates.contains($0.currentDate) }
+        case .custom(let start):
+            return procedures.filter { $0.currentDate == start?.toString() }
+        }
     }
-
-    var returnCurrentDate: String = {
+    
+    // MARK: - Helpers
+    
+    private func openRateApp() {
+        let value = MNUserDefaults.get(boolForKey: MNKeys.rateApp) ?? false
+        
+        if value.not && procedures.count > 0 {
+            viewModel.navigateToRateApp()
+        }
+    }
+    
+    private var returnCurrentDate: String {
         let date = Date()
         let df = DateFormatter()
         df.dateFormat = "dd/MM/yyyy"
-        let dateString = df.string(from: date)
-        return dateString
-    }()
+        return df.string(from: date)
+    }
+}
 
-    private func didSelectFilter(_ type: ButtonFilterType) {
-        switch type {
+extension ButtonFilterType {
+    
+    var trackEvent: MNEvent {
+        switch self {
         case .all:
-            TrackEvent.track(event: .homeFilterAll)
-            self.customView.procedures = procedures
+            return .homeFilterAll
         case .today:
-            TrackEvent.track(event: .homeFilterToday)
-            self.customView.procedures = todayProcedures(procedures: procedures)
+            return .homeFilterToday
         case .sevenDays:
-            TrackEvent.track(event: .homeFilterSevenDays)
-            self.customView.procedures = filteredProcedures(procedures: procedures, lastDays: 7)
+            return .homeFilterSevenDays
         case .thirtyDays:
-            TrackEvent.track(event: .homeFilterThisMonth)
-            self.customView.procedures = filteredProcedures(procedures: procedures, isMonthly: true)
-        case .custom: print("custom")
+            return .homeFilterThisMonth
+        case .custom:
+            return .homeFilterCustom
         }
-    }
-
-    private func openRateApp() {
-        let value = MNUserDefaults.get(boolForKey: MNKeys.rateApp) ?? false
-        if value.not && procedures.count > 0 {
-            self.viewModel.navigateToRateApp()
-        }
-    }
-
-    private func didSelectFilterDatePicker(_ date: String) {
-        let proceduresFiltered = procedures.filter { $0.currentDate == date }
-        self.customView.procedures = proceduresFiltered
-        self.customView.tableview.reloadData()
     }
 }

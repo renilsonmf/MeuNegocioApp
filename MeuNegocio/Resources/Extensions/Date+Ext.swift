@@ -8,6 +8,18 @@
 import Foundation
 
 extension Date {
+    
+    func toString(format: String = "dd/MM/yyyy") -> String {
+        return Self.formatter(format: format).string(from: self)
+    }
+    
+    private static func formatter(format: String) -> DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = format
+        formatter.locale = Locale(identifier: "pt_BR")
+        return formatter
+    }
+    
     static func getDates(forLastNDays nDays: Int) -> [String] {
         let cal = NSCalendar.current
         // start with today
