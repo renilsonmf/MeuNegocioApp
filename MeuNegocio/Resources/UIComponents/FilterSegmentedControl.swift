@@ -38,7 +38,6 @@ enum ButtonFilterType: Equatable {
 final class FilterSegmentedControl: UIView, ViewCodeContract {
 
     private var didSelectedFilter: (ButtonFilterType) -> Void
-//    private var didSelectDateClosure: (ButtonFilterType, String) -> Void
     
     private var buttonFilterMap: [UIButton: ButtonFilterType] = [:]
     

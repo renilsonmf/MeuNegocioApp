@@ -18,7 +18,6 @@ final class HomeView: UIView, ViewCodeContract {
     private var openProcedureDetails: (GetProcedureModel) -> Void?
     private var didPullRefresh: Action?
     private var didSelectedFilter: (ButtonFilterType) -> Void?
-//    private var didSelectDateClosure: (String) -> Void?
 
     // MARK: - Properties
     var procedures: [GetProcedureModel] = [] {
@@ -59,7 +58,6 @@ final class HomeView: UIView, ViewCodeContract {
         self.openProcedureDetails = openProcedureDetails
         self.didPullRefresh = didPullRefresh
         self.didSelectedFilter = didSelectedFilter
-//        self.didSelectDateClosure = didSelectDateClosure
         super.init(frame: .zero)
         setupView()
     }
