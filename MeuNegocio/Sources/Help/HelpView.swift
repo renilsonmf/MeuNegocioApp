@@ -124,7 +124,7 @@ extension HelpView: ViewCodeContract {
     }
     
     func setupConfiguration() {
-        backgroundColor = .MNColors.lightBrown
+        backgroundColor = .MNColors.yellow
     }
     
 }

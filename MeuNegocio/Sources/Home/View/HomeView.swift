@@ -71,7 +71,7 @@ final class HomeView: UIView, ViewCodeContract {
     // MARK: - Header
     private lazy var profileHeaderView: ProfileHeaderView = {
         let view = ProfileHeaderView()
-        view.backgroundColor = .MNColors.lightBrown
+        view.backgroundColor = .MNColors.yellow
         view.setupAction(actionButton: weakify { $0.openProfile?()})
         return view
     }()

@@ -57,7 +57,7 @@ class ProfileView: UIView {
     
     private lazy var iconView: UIView = {
         let container = UIView()
-        container.backgroundColor = .MNColors.lightBrown
+        container.backgroundColor = .MNColors.yellow
         container.roundCorners(cornerRadius: 30)
         container.translatesAutoresizingMaskIntoConstraints = false
         return container

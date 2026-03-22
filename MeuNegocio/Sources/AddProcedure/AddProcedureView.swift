@@ -143,7 +143,7 @@ class AddProcedureView: MNView {
             title: "Adicionar",
             colorTitle: .MNColors.darkGray,
             radius: 10,
-            background: .MNColors.lightBrown
+            background: .MNColors.yellow
         )
         button.addTarget(self, action: #selector(handleAddButton), for: .touchUpInside)
         return button

@@ -157,7 +157,7 @@ class EditProcedureView: MNView {
             title: "Salvar",
             colorTitle: .MNColors.darkGray,
             radius: 10,
-            background: .MNColors.lightBrown
+            background: .MNColors.yellow
         )
         button.heightAnchor(48)
         button.addTarget(self, action: #selector(handleAddButton), for: .touchUpInside)

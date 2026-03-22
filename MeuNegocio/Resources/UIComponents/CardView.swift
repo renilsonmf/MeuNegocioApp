@@ -15,7 +15,7 @@ class CardView: UIView {
         shadowOffset: CGSize = CGSize(width: 0.0, height: 1),
         shadowRadius: CGFloat = 2,
         cornerRadius: CGFloat = 10,
-        backgroundColor: UIColor = .MNColors.lightBrown
+        backgroundColor: UIColor = .MNColors.yellow
     ) {
         super.init(frame: .zero)
         self.layer.shadowColor = shadowColor

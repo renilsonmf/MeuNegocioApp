@@ -132,7 +132,7 @@ class UserOnboardingView: MNView {
         let button = CustomSubmitButton(
             title: "Continuar",
             radius: 10,
-            background: .MNColors.lightBrown
+            background: .MNColors.yellow
         )
         button.addTarget(self, action: #selector(handleButtonContinue), for: .touchUpInside)
         return button

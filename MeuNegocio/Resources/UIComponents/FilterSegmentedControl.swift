@@ -28,7 +28,7 @@ enum ButtonFilterType: Equatable {
         switch self {
         case .all: return "Total faturado"
         case .today: return "Hoje você faturou"
-        case .sevenDays: return "Últimos 7 dias você faturou"
+        case .sevenDays: return "Nos últimos 7 dias você faturou"
         case .thirtyDays: return "Este mês você faturou"
         case .custom(let start): return start?.toString(format: "dd MMM") ?? "Data selecionada"
         }
@@ -54,7 +54,7 @@ final class FilterSegmentedControl: UIView, ViewCodeContract {
         didSet {
             if case .all = currentIndexFilter {
                 handleSegmentedControlButtons()
-                all.backgroundColor = .MNColors.lightBrown
+                all.backgroundColor = .MNColors.yellow
             }
         }
     }
@@ -191,7 +191,7 @@ final class FilterSegmentedControl: UIView, ViewCodeContract {
     func editingDidBeginPicker() {
         TrackEvent.track(event: .homeFilterCustom)
         handleSegmentedControlButtons()
-        custom.backgroundColor = .MNColors.lightBrown
+        custom.backgroundColor = .MNColors.yellow
     }
 
     @objc
@@ -217,7 +217,7 @@ final class FilterSegmentedControl: UIView, ViewCodeContract {
             
             if button == sender {
                 
-                button.backgroundColor = .MNColors.lightBrown
+                button.backgroundColor = .MNColors.yellow
                 
                 if let filter = buttonFilterMap[button] {
                     currentIndexFilter = filter
