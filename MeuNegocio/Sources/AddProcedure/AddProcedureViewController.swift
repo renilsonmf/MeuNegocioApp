@@ -24,20 +24,26 @@ class AddProcedureViewController: CoordinatedViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Cadastrar Procedimento"
+        setupNavigationBar()
         self.hideKeyboardWhenTappedAround()
         customView.delegateActions = self
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
+    }
+
+    private func setupNavigationBar() {
+        title = "Adicionar atendimento"
+        navigationController?.navigationBar.topItem?.backButtonTitle = .stringEmpty
+        navigationController?.navigationBar.tintColor = .MNColors.darkGray
+        navigationController?.navigationBar.barTintColor = .white
     }
     
     override func loadView() {
         super.loadView()
-        navigationController?.navigationBar.barTintColor = .white
         self.view = customView
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        UIViewController.findCurrentController()?.viewWillAppear(true)
     }
 
 }
@@ -59,7 +65,14 @@ extension AddProcedureViewController: AddProcedureActionsProtocol {
                     if result {
                         self.customView.addButton.loadingIndicator(show: false)
                         self.showAlert(title: String.stringEmpty, messsage: "Adicionado com sucesso!") {
-                            self.viewModel.closed()
+                            self.customView.clearAllFields()
+                            // Seta o filtro diretamente antes de trocar de tab,
+                            // garantindo que viewWillAppear já leia o pendingFilter correto
+                            if let homeNav = self.tabBarController?.viewControllers?.first as? UINavigationController,
+                               let homeVC = homeNav.viewControllers.first as? HomeViewController {
+                                homeVC.pendingFilter = .today
+                            }
+                            self.tabBarController?.selectedIndex = 0
                         }
                     } else {
                         DispatchQueue.main.async {

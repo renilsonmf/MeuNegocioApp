@@ -28,7 +28,7 @@ final class ReportCardView: CardView, ViewCodeContract {
     private lazy var totalAmountValueLabel = MNLabel()
     
     private lazy var proceduresTitleLabel = MNLabel(
-        text: "Procedimentos",
+        text: "Atendimentos",
         font: UIFont.boldSystemFont(ofSize: 14),
         textColor: .MNColors.grayDescription
     ) .. {

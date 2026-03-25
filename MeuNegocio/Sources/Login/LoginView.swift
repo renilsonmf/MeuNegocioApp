@@ -208,7 +208,7 @@ class LoginView: UIView {
     
     private func isEnabledButtonLogin(_ isEnabled: Bool) {
         if isEnabled {
-            loginButton.backgroundColor = .MNColors.lightBrown
+            loginButton.backgroundColor = .MNColors.yellow
             loginButton.isEnabled = true
         } else {
             loginButton.backgroundColor = .systemGray

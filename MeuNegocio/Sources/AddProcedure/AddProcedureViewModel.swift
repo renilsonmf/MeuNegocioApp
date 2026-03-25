@@ -11,7 +11,7 @@ import FirebaseAuth
 
 protocol AddProcedureViewModelProtocol {
     func createProcedureFirestore(procedure: CreateProcedureModel, completion: @escaping (Bool) -> Void)
-    func closed()
+    func goToHome()
 }
 
 class AddProcedureViewModel: AddProcedureViewModelProtocol {
@@ -25,8 +25,8 @@ class AddProcedureViewModel: AddProcedureViewModelProtocol {
     }
 
     // MARK: - Routes
-    func closed() {
-        coordinator?.closed()
+    func goToHome() {
+        coordinator?.goToHome()
     }
 
     // MARK: - Methods

@@ -66,16 +66,6 @@ final class HelpView: UIView {
         $0.layer.borderWidth = 1
     }
 
-//    private lazy var wppButton = UIButton() .. {
-//        $0.setTitle("Chame-nos no whatsapp", for: .normal)
-//        $0.setTitleColor(.MNColors.grayDarkest, for: .normal)
-//        $0.setTitleColor(.darkGray, for: .highlighted)
-//        $0.backgroundColor = .clear
-//        $0.translatesAutoresizingMaskIntoConstraints = false
-//        $0.contentHorizontalAlignment = .left
-//        $0.addTarget(self, action: #selector(didTapWpp), for: .touchUpInside)
-//    }
-
     private lazy var wppIconButton = IconButton() .. {
         $0.setup(
             image: UIImage(named: Icon.whatsapp.rawValue),
@@ -88,9 +78,6 @@ final class HelpView: UIView {
 
     @objc
     private func didTapSendEmail() { openMailCompose?() }
-
-    @objc
-    private func didTapWpp() { openWhatsapp?() }
 
 }
 
@@ -105,9 +92,8 @@ extension HelpView: ViewCodeContract {
     
     func setupConstraints() {
         headerCardView
-            .topAnchor(in: self, padding: 50)
+            .topAnchor(in: self, padding: 16)
             .heightAnchor(60)
-            .leftAnchor(in: self, padding: 15)
             .leftAnchor(in: self, padding: 15)
             .centerX(in: self)
         
@@ -124,7 +110,7 @@ extension HelpView: ViewCodeContract {
     }
     
     func setupConfiguration() {
-        backgroundColor = .MNColors.lightBrown
+        backgroundColor = .MNColors.lightGray
     }
     
 }

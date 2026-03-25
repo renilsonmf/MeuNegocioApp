@@ -10,6 +10,7 @@ import UIKit
 import PDFKit
 
 final class ReportViewController: CoordinatedViewController {
+    private var proceduresObserver: NSObjectProtocol?
     
     // MARK: - Properties
     var procedures: [GetProcedureModel]
@@ -20,15 +21,32 @@ final class ReportViewController: CoordinatedViewController {
     private let viewModel: ReportViewModelProtocol
     private lazy var customView = ReportView()
     
+
     // MARK: - Init
     init(viewModel: ReportViewModelProtocol, coordinator: CoordinatorProtocol, procedures: [GetProcedureModel]) {
         self.procedures = procedures
         self.viewModel = viewModel
         super.init(coordinator: coordinator)
+        notifications()
+    }
+    
+    func notifications() {
+        proceduresObserver = NotificationCenter.default.addObserver(forName: .didUpdateProceduresForReport, object: nil, queue: .main) { [weak self] notification in
+            guard let self = self,
+                  let updated = notification.userInfo?["procedures"] as? [GetProcedureModel] else { return }
+            self.procedures = updated
+            self.fetchProcedures()
+        }
     }
 
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        if let observer = proceduresObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
     
     // MARK: - Lifecycle
@@ -36,11 +54,7 @@ final class ReportViewController: CoordinatedViewController {
         super.viewDidLoad()
         setupNavigationBar()
         hideKeyboardWhenTappedAround()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        fetchProcedures()
+        navigationController?.title = "Relátorios"
     }
     
     override func loadView() {

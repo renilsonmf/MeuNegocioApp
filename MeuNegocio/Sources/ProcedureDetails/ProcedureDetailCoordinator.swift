@@ -22,8 +22,7 @@ class ProcedureDetailCoordinator: BaseCoordinator {
         let viewModel = ProcedureDetailViewModel(coordinator: self)
         let controller = ProcedureDetailViewController(viewModel: viewModel, coordinator: self, procedure: procedure)
         configuration.viewController = controller
-        configuration.navigationController?.navigationBar.topItem?.backButtonTitle = ""
-        configuration.navigationController?.navigationBar.tintColor = .MNColors.darkGray
+        configuration.navigationController?.setNavigationBarHidden(false, animated: true)
         configuration.navigationController?.pushViewController(controller, animated: true)
     }
     
@@ -36,12 +35,10 @@ class ProcedureDetailCoordinator: BaseCoordinator {
     
     func closed(_ type: Presentation) {
         switch type {
-        case .present :
+        case .present:
             configuration.navigationController?.dismiss(animated: true)
-        case .push :
+        case .push:
             configuration.navigationController?.popViewController(animated: true)
         }
-        
     }
-
 }

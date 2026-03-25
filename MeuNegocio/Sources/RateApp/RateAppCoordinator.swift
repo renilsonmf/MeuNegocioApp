@@ -17,7 +17,6 @@ class RateAppCoordinator: BaseCoordinator {
             viewModel: viewModel,
             navigation: navigation
         )
-        configuration.viewController = controller
         controller.modalPresentationStyle = .custom
         controller.modalTransitionStyle = .crossDissolve
         configuration.navigationController?.present(controller, animated: false, completion: nil)
@@ -39,6 +38,5 @@ class RateAppCoordinator: BaseCoordinator {
         let coordinator = HelpCoordinator(with: configuration)
         coordinator.title = "Enviar reclamação"
         coordinator.start()
-        
     }
 }

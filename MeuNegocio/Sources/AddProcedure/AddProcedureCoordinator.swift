@@ -6,19 +6,25 @@
 //
 
 import Foundation
+import UIKit
 
 class AddProcedureCoordinator: BaseCoordinator {
     override func start() {
         let viewModel = AddProcedureViewModel(coordinator: self)
         let controller = AddProcedureViewController(viewModel: viewModel, coordinator: self)
         configuration.viewController = controller
-        configuration.navigationController?.navigationBar.topItem?.backButtonTitle = String.stringEmpty
-        configuration.navigationController?.navigationBar.tintColor = .MNColors.darkGray
-        configuration.navigationController?.present(controller, animated: true)
+        configuration.navigationController?.setNavigationBarHidden(false, animated: true)
+        configuration.navigationController?.pushViewController(controller, animated: true)
     }
     
-    func closed() {
-        configuration.navigationController?.dismiss(animated: true, completion: nil)
+    func goToHome() {
+        configuration.navigationController?.dismiss(animated: true)
+    }
+
+    func rootViewController() -> UIViewController {
+        let viewModel = AddProcedureViewModel(coordinator: self)
+        let controller = AddProcedureViewController(viewModel: viewModel, coordinator: self)
+        return controller
     }
 }
 

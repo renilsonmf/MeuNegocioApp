@@ -35,7 +35,7 @@ class CheckYourAccountController: CoordinatedViewController {
     
     override func loadView() {
         super.loadView()
-        navigationController?.navigationBar.barTintColor = .MNColors.lightBrown
+        navigationController?.navigationBar.barTintColor = .MNColors.yellow
         self.view = customView
     }
 

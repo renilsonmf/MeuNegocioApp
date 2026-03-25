@@ -18,9 +18,8 @@ final class LoginCoordinator: BaseCoordinator {
     }
     
     func navigateToHome() {
-        let coordinator = HomeCoordinator(with: configuration)
+        let coordinator = MainTabBarCoordinator(with: configuration)
         coordinator.start()
-        configuration.navigationController?.removeViewController(LoginViewController.self)
     }
     
     func navigateToUserOnboarding() {

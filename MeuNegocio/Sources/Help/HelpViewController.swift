@@ -31,7 +31,7 @@ class HelpViewController: CoordinatedViewController, MFMailComposeViewController
             $0.mailComposeDelegate = self
         }
         DispatchQueue.main.async {
-            self.navigationController?.present(mailComposeController, animated: true)
+            self.present(mailComposeController, animated: true)
         }
     }
 
@@ -49,14 +49,14 @@ class HelpViewController: CoordinatedViewController, MFMailComposeViewController
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = titleEmail == nil ? "Ajuda" : "Reclamação"
+        title = titleEmail == nil ? "Informações" : "Reclamação"
     }
 
     override func loadView() {
         super.loadView()
         self.view = customView
     }
-
+    
     // MARK: - MFMailComposeViewController Delegate
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {

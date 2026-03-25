@@ -75,7 +75,7 @@ class CardCostsView: UIView {
     lazy var customSwitch: UISwitch = {
         let toggle = UISwitch()
         toggle.setOn(false, animated: false)
-        toggle.onTintColor = .MNColors.lightBrown
+        toggle.onTintColor = .MNColors.yellow
         toggle.addTarget(self, action: #selector(self.switchStateDidChange(_:)), for: .valueChanged)
         toggle.translatesAutoresizingMaskIntoConstraints = false
         return toggle

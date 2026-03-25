@@ -12,7 +12,7 @@ public extension UIColor {
     struct MNColors {
         
         // MARK: - Home colors
-        public static var lightBrown: UIColor {
+        public static var yellow: UIColor {
             return UIColor(named: "lightBrown") ?? UIColor.yellow
         }
         
@@ -59,6 +59,12 @@ public extension UIColor {
         public static var redDelete: UIColor {
             return UIColor(named: "redDarkest") ?? UIColor.gray
         }
+        
+        public static var graySuperLight: UIColor {
+            return UIColor(named: "graySuperLight") ?? UIColor.gray
+        }
+        
+        
         
     }
     

@@ -23,6 +23,13 @@ final class HomeCoordinator: BaseCoordinator {
         configuration.viewController = controller
         configuration.navigationController?.pushViewController(controller, animated: true)
     }
+
+    // Para uso no TabBarCoordinator
+    func rootViewController() -> UIViewController {
+        let viewModel = HomeViewModel(coordinator: self)
+        let controller = HomeViewController(viewModel: viewModel, coordinator: self)
+        return controller
+    }
     
     func navigateTo(_ event: TypeScreen) {
         switch event {
@@ -38,7 +45,7 @@ final class HomeCoordinator: BaseCoordinator {
 
 extension HomeCoordinator {
     
-    // MARK: - Routes
+    // MARK: - Routes (push no nav da tab Home)
     private func openReport(procedures: [GetProcedureModel]) {
         ReportCoordinator(with: configuration).start(procedures: procedures)
     }

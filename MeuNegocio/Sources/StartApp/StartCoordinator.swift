@@ -21,9 +21,9 @@ class StartCoordinator: BaseCoordinator {
         configuration.navigationController?.removeViewController(StartViewController.self)
     }
     
-    func navigateToHome() {
-        let coordinator = HomeCoordinator(with: configuration)
-        coordinator.start()
+    func navigateToMainTabBar() {
+        let mainTabBarCoordinator = MainTabBarCoordinator(with: configuration)
+        mainTabBarCoordinator.start()
         configuration.navigationController?.removeViewController(StartViewController.self)
     }
     

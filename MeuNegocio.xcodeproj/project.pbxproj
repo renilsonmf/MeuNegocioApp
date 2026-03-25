@@ -64,6 +64,8 @@
 		52ECF8782953AAFE00C6230A /* TrackEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52ECF8772953AAFC00C6230A /* TrackEvent.swift */; };
 		52F59BF8295CAFD50000CB20 /* CardCostsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F59BF7295CAFD50000CB20 /* CardCostsView.swift */; };
 		52F59BFA295CE5CD0000CB20 /* TitleAndSubtitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F59BF9295CE5CD0000CB20 /* TitleAndSubtitleView.swift */; };
+		72067CED2F6F8FD40012AE1C /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72067CEB2F6F8FD40012AE1C /* MainTabBarController.swift */; };
+		72067CEE2F6F8FD40012AE1C /* MainTabBarCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72067CEC2F6F8FD40012AE1C /* MainTabBarCoordinator.swift */; };
 		723EEA2D2F5F605200D43557 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 723EEA2C2F5F605200D43557 /* GoogleSignIn */; };
 		723EEA302F5F618D00D43557 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 723EEA2F2F5F618D00D43557 /* Lottie */; };
 		723EEA332F5F629500D43557 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 723EEA322F5F629500D43557 /* FirebaseAnalytics */; };
@@ -222,6 +224,8 @@
 		52ECF8772953AAFC00C6230A /* TrackEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackEvent.swift; sourceTree = "<group>"; };
 		52F59BF7295CAFD50000CB20 /* CardCostsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCostsView.swift; sourceTree = "<group>"; };
 		52F59BF9295CE5CD0000CB20 /* TitleAndSubtitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleAndSubtitleView.swift; sourceTree = "<group>"; };
+		72067CEB2F6F8FD40012AE1C /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
+		72067CEC2F6F8FD40012AE1C /* MainTabBarCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarCoordinator.swift; sourceTree = "<group>"; };
 		C016B24C28DFA2DE007372E4 /* ProcedureModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcedureModel.swift; sourceTree = "<group>"; };
 		C016B44028DFE10B007372E4 /* PaymentMethodType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentMethodType.swift; sourceTree = "<group>"; };
 		C016B61628E0AFC4007372E4 /* ProcedureDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcedureDetailViewController.swift; sourceTree = "<group>"; };
@@ -493,6 +497,15 @@
 			path = RateApp;
 			sourceTree = "<group>";
 		};
+		72067CE82F6F8BE00012AE1C /* TabBar */ = {
+			isa = PBXGroup;
+			children = (
+				72067CEB2F6F8FD40012AE1C /* MainTabBarController.swift */,
+				72067CEC2F6F8FD40012AE1C /* MainTabBarCoordinator.swift */,
+			);
+			path = TabBar;
+			sourceTree = "<group>";
+		};
 		726F35BC2F605DF400FAAF11 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -616,6 +629,7 @@
 		C0A7414327B1955200391CE6 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				72067CE82F6F8BE00012AE1C /* TabBar */,
 				52ECF86C2951061500C6230A /* RateApp */,
 				5213DD05290B699400AFC980 /* StartApp */,
 				52B8A08E28E7C90E00B1C9F7 /* UserOnboarding */,
@@ -1048,6 +1062,8 @@
 				52ECF8782953AAFE00C6230A /* TrackEvent.swift in Sources */,
 				5213DD00290AFC3A00AFC980 /* MNUserDefaults.swift in Sources */,
 				52B8A09028E7C95D00B1C9F7 /* UserOnboardingViewController.swift in Sources */,
+				72067CED2F6F8FD40012AE1C /* MainTabBarController.swift in Sources */,
+				72067CEE2F6F8FD40012AE1C /* MainTabBarCoordinator.swift in Sources */,
 				52C4AE7D28B999C10055E384 /* AddProcedureView.swift in Sources */,
 				522D9020289A00E00085575A /* LoginView.swift in Sources */,
 				52C4AE7428B565BD0055E384 /* ProfileViewController.swift in Sources */,

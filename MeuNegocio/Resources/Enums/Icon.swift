@@ -1,3 +1,10 @@
+
+import Foundation
+
+extension Notification.Name {
+    static let didUpdateProceduresForReport = Notification.Name("didUpdateProceduresForReport")
+    static let didAddProcedure = Notification.Name("didAddProcedure")
+}
 //
 //  Icon.swift
 //  MeuNegocio
@@ -35,4 +42,5 @@ enum Icon: String {
     case emojiGreat = "emoji_great"
     case emojiRegular = "emoji_regular"
     case emojiGood = "emoji_good"
+    case calendar = "ic_calendar"
 }

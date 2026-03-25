@@ -17,8 +17,7 @@ final class HomeView: UIView, ViewCodeContract {
     private var openHelp: Action?
     private var openProcedureDetails: (GetProcedureModel) -> Void?
     private var didPullRefresh: Action?
-    private var didSelectIndexClosure: (ButtonFilterType) -> Void?
-    private var didSelectDateClosure: (String) -> Void?
+    private var didSelectedFilter: (ButtonFilterType) -> Void?
 
     // MARK: - Properties
     var procedures: [GetProcedureModel] = [] {
@@ -49,8 +48,7 @@ final class HomeView: UIView, ViewCodeContract {
         navigateToHelp: @escaping Action,
         openProcedureDetails: @escaping (GetProcedureModel) -> Void?,
         didPullRefresh: @escaping Action,
-        didSelectIndexClosure: @escaping (ButtonFilterType) -> Void?,
-        didSelectDateClosure: @escaping (String) -> Void
+        didSelectedFilter: @escaping (ButtonFilterType) -> Void?
     ) {
         self.openReport = navigateToReport
         self.openAlertAction = alertAction
@@ -59,8 +57,7 @@ final class HomeView: UIView, ViewCodeContract {
         self.openHelp = navigateToHelp
         self.openProcedureDetails = openProcedureDetails
         self.didPullRefresh = didPullRefresh
-        self.didSelectIndexClosure = didSelectIndexClosure
-        self.didSelectDateClosure = didSelectDateClosure
+        self.didSelectedFilter = didSelectedFilter
         super.init(frame: .zero)
         setupView()
     }
@@ -72,7 +69,8 @@ final class HomeView: UIView, ViewCodeContract {
     // MARK: - Header
     private lazy var profileHeaderView: ProfileHeaderView = {
         let view = ProfileHeaderView()
-        view.backgroundColor = .MNColors.lightBrown
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .MNColors.yellow
         view.setupAction(actionButton: weakify { $0.openProfile?()})
         return view
     }()
@@ -90,22 +88,12 @@ final class HomeView: UIView, ViewCodeContract {
         return stack
     }()
     
-    lazy var menuCardsView: MenuCardView = {
-        let container = MenuCardView(
-            closureReport: { self.openReport?() },
-            closureInfoCard: { self.openHelp?() },
-            closureMore: { self.openAddProcedure?() })
-        container.translatesAutoresizingMaskIntoConstraints = false
-        return container
-    }()
-    
     lazy var totalReceiptCard = TotalReceiptCardView() .. {
         $0.loadingIndicatorView(show: true)
     }
     
     lazy var filterView = FilterSegmentedControl(
-        didSelectIndexClosure: weakify { $0.didSelectIndexClosure($1) },
-        didSelectDateClosure: weakify { $0.didSelectDateClosure($1) }
+        didSelectedFilter: weakify { $0.didSelectedFilter($1) }
     )
     
     // MARK: - Main
@@ -124,7 +112,6 @@ final class HomeView: UIView, ViewCodeContract {
         table.refreshControl?.addTarget(self, action: #selector(pullToRefresh), for: .valueChanged)
         table.separatorStyle = .none
         table.backgroundColor = .white
-        table.roundCorners(cornerRadius: 10, typeCorners: [.topLeft, .topRight])
         table.loadingIndicatorView()
         return table
     }()
@@ -152,7 +139,6 @@ final class HomeView: UIView, ViewCodeContract {
         addSubview(sectionCardsView)
         addSubview(mainBaseView)
         
-        sectionCardsView.addArrangedSubview(menuCardsView)
         sectionCardsView.addArrangedSubview(totalReceiptCard)
         sectionCardsView.addArrangedSubview(filterView)
         
@@ -161,29 +147,32 @@ final class HomeView: UIView, ViewCodeContract {
     
     func setupConstraints() {
         
-        profileHeaderView
-            .topAnchor(in: self, layoutOption: .useMargins)
-            .leftAnchor(in: self)
-            .rightAnchor(in: self)
-            .heightAnchor(70)
-        
-        sectionCardsView
-            .topAnchor(in: profileHeaderView, attribute: .bottom)
-            .leftAnchor(in: self)
-            .rightAnchor(in: self)
+        NSLayoutConstraint.activate([
+            // MARK: - Header
+            profileHeaderView.topAnchor.constraint(equalTo: topAnchor),
+            profileHeaderView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            profileHeaderView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            profileHeaderView.heightAnchor.constraint(equalToConstant: 120),
 
-        mainBaseView
-            .topAnchor(in: sectionCardsView, attribute: .bottom)
-            .leftAnchor(in: self)
-            .rightAnchor(in: self)
-            .bottomAnchor(in: self, layoutOption: .useMargins)
+            // MARK: - Section Cards
+            sectionCardsView.topAnchor.constraint(equalTo: profileHeaderView.bottomAnchor),
+            sectionCardsView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            sectionCardsView.trailingAnchor.constraint(equalTo: trailingAnchor),
 
-        tableview
-            .topAnchor(in: mainBaseView)
-            .leftAnchor(in: mainBaseView)
-            .rightAnchor(in: mainBaseView)
-            .bottomAnchor(in: mainBaseView, padding: -1, layoutOption: .useMargins)
+            // MARK: - Main Base View
+            mainBaseView.topAnchor.constraint(equalTo: sectionCardsView.bottomAnchor),
+            mainBaseView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            mainBaseView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            mainBaseView.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            // MARK: - TableView
+            tableview.topAnchor.constraint(equalTo: mainBaseView.topAnchor),
+            tableview.leadingAnchor.constraint(equalTo: mainBaseView.leadingAnchor),
+            tableview.trailingAnchor.constraint(equalTo: mainBaseView.trailingAnchor),
+            tableview.bottomAnchor.constraint(equalTo: mainBaseView.bottomAnchor)
+        ])
     }
+
     
     func setupConfiguration() {
         self.backgroundColor = .MNColors.lightGray
@@ -234,6 +223,6 @@ extension HomeView: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return "Procedimentos"
+        return "Atendimentos"
     }
 }

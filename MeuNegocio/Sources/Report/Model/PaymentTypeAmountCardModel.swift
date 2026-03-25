@@ -34,7 +34,7 @@ enum ReportType: String {
 
 struct PDFModel {
     static let columsTitles = ["Método", "Cliente", "Data", "Valor", "Custos", "Valor Líq"]
-    static let title = "Relatório de procedimentos"
+    static let title = "Relatório de atendimentos"
     static let dailyTitle = "RelatorioDiario"
     static let weeklyTitle = "RelatorioSemanal"
     static let monthlyTitle = "RelatorioMensal"

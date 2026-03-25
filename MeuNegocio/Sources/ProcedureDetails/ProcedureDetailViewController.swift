@@ -44,7 +44,7 @@ final class ProcedureDetailViewController: CoordinatedViewController {
         super.loadView()
         view = customView
     }
-    
+
     private func editProcedure(procedure: GetProcedureModel) {
         viewModel.goToEditProcedure(procedure)
     }
