@@ -243,7 +243,6 @@ class AddProcedureView: MNView {
 }
 extension AddProcedureView: ViewCodeContract {
     func setupHierarchy() {
-//        addSubview(gripView)
         addSubview(subTitleLabel)
         addSubview(containerStack)
         

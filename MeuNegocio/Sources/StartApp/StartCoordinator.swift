@@ -21,18 +21,10 @@ class StartCoordinator: BaseCoordinator {
         configuration.navigationController?.removeViewController(StartViewController.self)
     }
     
-//    func navigateToHome() {
-//        let coordinator = HomeCoordinator(with: configuration)
-//        coordinator.start()
-//        configuration.navigationController?.removeViewController(StartViewController.self)
-//    }
-    
     func navigateToMainTabBar() {
         let mainTabBarCoordinator = MainTabBarCoordinator(with: configuration)
         mainTabBarCoordinator.start()
         configuration.navigationController?.removeViewController(StartViewController.self)
-        // Se quiser, armazene uma referência ao coordinator para manter o ciclo de vida
-        // self.childCoordinators.append(mainTabBarCoordinator)
     }
     
     func navigateToOnboarding() {

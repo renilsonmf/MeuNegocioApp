@@ -56,11 +56,6 @@ class HelpViewController: CoordinatedViewController, MFMailComposeViewController
         super.loadView()
         self.view = customView
     }
-
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//        navigationController?.setNavigationBarHidden(false, animated: false)
-//    }
     
     // MARK: - MFMailComposeViewController Delegate
     

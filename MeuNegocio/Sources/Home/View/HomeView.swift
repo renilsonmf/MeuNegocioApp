@@ -88,15 +88,6 @@ final class HomeView: UIView, ViewCodeContract {
         return stack
     }()
     
-//    lazy var menuCardsView: MenuCardView = {
-//        let container = MenuCardView(
-//            closureReport: { self.openReport?() },
-//            closureInfoCard: { self.openHelp?() },
-//            closureMore: { self.openAddProcedure?() })
-//        container.translatesAutoresizingMaskIntoConstraints = false
-//        return container
-//    }()
-    
     lazy var totalReceiptCard = TotalReceiptCardView() .. {
         $0.loadingIndicatorView(show: true)
     }
@@ -148,7 +139,6 @@ final class HomeView: UIView, ViewCodeContract {
         addSubview(sectionCardsView)
         addSubview(mainBaseView)
         
-//        sectionCardsView.addArrangedSubview(menuCardsView)
         sectionCardsView.addArrangedSubview(totalReceiptCard)
         sectionCardsView.addArrangedSubview(filterView)
         
