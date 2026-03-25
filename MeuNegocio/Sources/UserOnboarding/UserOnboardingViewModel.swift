@@ -53,7 +53,7 @@ class UserOnboardingViewModel: UserOnboardingViewModelProtocol {
     
     // MARK: - Routes
     func navigateToHome() {
-        coordinator?.navigateToHome()
+        coordinator?.navigateToMainTabBar()
     }
     
 }

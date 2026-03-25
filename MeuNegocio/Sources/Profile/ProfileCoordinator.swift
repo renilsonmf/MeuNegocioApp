@@ -11,16 +11,19 @@ class ProfileCoordinator: BaseCoordinator {
     func start(userData: UserModel?) {
         let viewModel = ProfileViewModel(coordinator: self)
         let controller = ProfileViewController(viewModel: viewModel, coordinator: self, userData: userData)
-        configuration.viewController = controller
-        configuration.navigationController?.navigationBar.topItem?.backButtonTitle = ""
-        configuration.navigationController?.navigationBar.tintColor = .MNColors.darkGray
-        configuration.navigationController?.present(controller, animated: true)
+        let nav = UINavigationController(rootViewController: controller)
+        configuration.navigationController?.present(nav, animated: true)
     }
     
     func closed() {
-        let coordinator = LoginCoordinator(with: configuration)
-        configuration.navigationController?.dismiss(animated: true)
-        configuration.navigationController?.viewControllers.removeAll()
-        coordinator.start()
+        configuration.navigationController?.dismiss(animated: true) { [weak self] in
+            guard let self else { return }
+            let navigation = UINavigationController()
+            navigation.setNavigationBarHidden(true, animated: false)
+            self.configuration.navigationController = navigation
+            let coordinator = LoginCoordinator(with: self.configuration)
+            coordinator.start()
+            self.configuration.keyWindow?.rootViewController = navigation
+        }
     }
 }

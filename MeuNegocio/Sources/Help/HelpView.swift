@@ -105,9 +105,8 @@ extension HelpView: ViewCodeContract {
     
     func setupConstraints() {
         headerCardView
-            .topAnchor(in: self, padding: 50)
+            .topAnchor(in: self, padding: 16)
             .heightAnchor(60)
-            .leftAnchor(in: self, padding: 15)
             .leftAnchor(in: self, padding: 15)
             .centerX(in: self)
         
@@ -124,7 +123,7 @@ extension HelpView: ViewCodeContract {
     }
     
     func setupConfiguration() {
-        backgroundColor = .MNColors.yellow
+        backgroundColor = .MNColors.lightGray
     }
     
 }

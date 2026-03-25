@@ -12,7 +12,7 @@ final class ProfileHeaderView: UIView {
     // MARK: - Private properties
     private var openProfile: Action?
     
-    // MARK: - Init    
+    // MARK: - Init
     init() {
         super.init(frame: .zero)
         setupView()
@@ -44,7 +44,7 @@ final class ProfileHeaderView: UIView {
         return container
     }()
     
-    private lazy var iconImage: MNLabel = {
+    private lazy var initialLattersLabel: MNLabel = {
         let label = MNLabel(font: UIFont.boldSystemFont(ofSize: 16))
         return label
     }()
@@ -72,7 +72,7 @@ final class ProfileHeaderView: UIView {
     }
     
     func setupLayout(nameUser: String) {
-        iconImage.text = "\(nameUser.prefix(2).uppercased())"
+        initialLattersLabel.text = "\(nameUser.prefix(2).uppercased())"
         nameUserLabel.text = "Olá, \(nameUser)"
     }
     
@@ -90,26 +90,31 @@ extension ProfileHeaderView: ViewCodeContract {
         containerStackView.addArrangedSubview(nameUserLabel)
         containerStackView.addArrangedSubview(iconArrow)
         
-        iconView.addSubview(iconImage)
+        iconView.addSubview(initialLattersLabel)
     }
     
     func setupConstraints() {
-        containerStackView
-            .leftAnchor(in: self, padding: 16)
-            .bottomAnchor(in: self, padding: 12)
-        
-        iconView
-            .heightAnchor(40)
-            .widthAnchor(40)
-        
-        iconImage
-            .centerX(in: iconView)
-            .centerY(in: iconView)
- 
-        iconArrow
-            .heightAnchor(15)
-            .widthAnchor(15)
+        NSLayoutConstraint.activate([
+            // MARK: - containerStackView
+            containerStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            containerStackView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -16),
+            containerStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
+            containerStackView.heightAnchor.constraint(equalToConstant: 40),
+
+            // MARK: - iconView
+            iconView.heightAnchor.constraint(equalToConstant: 40),
+            iconView.widthAnchor.constraint(equalToConstant: 40),
+
+            // MARK: - initialLattersLabel (centralizado no iconView)
+            initialLattersLabel.centerXAnchor.constraint(equalTo: iconView.centerXAnchor),
+            initialLattersLabel.centerYAnchor.constraint(equalTo: iconView.centerYAnchor),
+
+            // MARK: - iconArrow
+            iconArrow.heightAnchor.constraint(equalToConstant: 15),
+            iconArrow.widthAnchor.constraint(equalToConstant: 15)
+        ])
     }
+
     
     func setupConfiguration() {
         self.translatesAutoresizingMaskIntoConstraints = false

@@ -51,9 +51,18 @@ final class FilterSegmentedControl: UIView, ViewCodeContract {
 
     var currentIndexFilter: ButtonFilterType = .all {
         didSet {
-            if case .all = currentIndexFilter {
-                handleSegmentedControlButtons()
+            handleSegmentedControlButtons()
+            switch currentIndexFilter {
+            case .all:
                 all.backgroundColor = .MNColors.yellow
+            case .today:
+                today.backgroundColor = .MNColors.yellow
+            case .sevenDays:
+                sevenDays.backgroundColor = .MNColors.yellow
+            case .thirtyDays:
+                thirtyDays.backgroundColor = .MNColors.yellow
+            case .custom:
+                custom.backgroundColor = .MNColors.yellow
             }
         }
     }

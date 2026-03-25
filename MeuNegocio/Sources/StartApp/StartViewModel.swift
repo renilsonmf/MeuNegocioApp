@@ -47,7 +47,7 @@ class StartViewModel: StartViewModelProtocol {
                 if error != nil {
                     self.coordinator?.navigateToLogin()
                 } else {
-                    self.coordinator?.navigateToHome()
+                    self.coordinator?.navigateToMainTabBar()
                 }
             }
         } else {

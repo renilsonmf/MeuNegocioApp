@@ -14,6 +14,8 @@ final class HomeViewController: CoordinatedViewController {
     private let viewModel: HomeViewModelProtocol
     private var procedures: [GetProcedureModel] = []
     private var userData: UserModel? = nil
+    var pendingFilter: ButtonFilterType? = nil
+    private var currentFilter: ButtonFilterType = .all
     
     // MARK: - View
     
@@ -43,42 +45,52 @@ final class HomeViewController: CoordinatedViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupBindings()
+    }
+    
+    override func loadView() {
+        super.loadView()
         self.view = customView
-        bindProperties()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: false)
-        customView.currentIndexFilter = .all
-        bindProperties()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        navigationController?.setNavigationBarHidden(false, animated: false)
-    }
-    
-    // MARK: - Bind
-    
-    private func bindProperties() {
-        
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+        // Aplica pendingFilter ou reseta para .all
+        currentFilter = pendingFilter ?? .all
+        pendingFilter = nil
+        customView.currentIndexFilter = currentFilter
+        let filtered = getFilteredProcedures(by: currentFilter)
+        let title = currentFilter == .all ? "Faturamento total" : currentFilter.resumeCardTitle
+        updateCardResume(with: filtered, title: title)
         viewModel.input.loadHome()
-        
+    }
+
+    // MARK: - Bind
+
+    private func setupBindings() {
         viewModel.output.procedures.bind() { [weak self] result in
             guard let self else { return }
             
-            self.procedures = result.reversed()
+            self.procedures = result
+            NotificationCenter.default.post(name: .didUpdateProceduresForReport, object: nil, userInfo: ["procedures": self.procedures])
             
-            self.updateCardResume(with: self.procedures, title: "Faturamento total")
-            
+            // Sempre aplica o filtro atual ao receber novos dados
+            let filtered = self.getFilteredProcedures(by: self.currentFilter)
+            let title = self.currentFilter == .all ? "Faturamento total" : self.currentFilter.resumeCardTitle
+            self.updateCardResume(with: filtered, title: title)
             self.customView.totalReceiptCard.loadingIndicatorView(show: false)
+            self.openRateApp()
         }
         
         viewModel.output.userData.bind { [weak self] user in
             self?.userData = user
             self?.customView.userName = user?.name ?? ""
         }
+    }
+
+    private func bindProperties() {
+        viewModel.input.loadHome()
     }
     
     // MARK: - UI Update
@@ -117,13 +129,9 @@ final class HomeViewController: CoordinatedViewController {
     
     private func didSelectFilter(_ type: ButtonFilterType) {
         TrackEvent.track(event: type.trackEvent)
-        
+        currentFilter = type
         let filtered = getFilteredProcedures(by: type)
-        
-        updateCardResume(
-            with: filtered,
-            title: type.resumeCardTitle
-        )
+        updateCardResume(with: filtered, title: type.resumeCardTitle)
     }
     
     private func getFilteredProcedures(by filter: ButtonFilterType) -> [GetProcedureModel] {
@@ -149,7 +157,7 @@ final class HomeViewController: CoordinatedViewController {
     private func openRateApp() {
         let value = MNUserDefaults.get(boolForKey: MNKeys.rateApp) ?? false
         
-        if value.not && procedures.count > 0 {
+        if value.not && procedures.count > 5 {
             viewModel.navigateToRateApp()
         }
     }

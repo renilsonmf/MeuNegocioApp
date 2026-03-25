@@ -14,14 +14,23 @@ class HelpCoordinator: BaseCoordinator {
         let viewModel = HelpViewModel(coordinator: self)
         let controller = HelpViewController(viewModel: viewModel, coordinator: self, titleEmail: title)
         configuration.viewController = controller
-        configuration.navigationController?.navigationBar.topItem?.backButtonTitle = ""
-        configuration.navigationController?.navigationBar.tintColor = .MNColors.darkGray
+        configuration.navigationController?.setNavigationBarHidden(false, animated: true)
         configuration.navigationController?.pushViewController(controller, animated: true)
     }
     
     func closed() {
-        let coordinator = LoginCoordinator(with: configuration)
-        configuration.navigationController?.viewControllers.removeAll()
+        let navigation = UINavigationController()
+        navigation.setNavigationBarHidden(true, animated: false)
+        self.configuration.navigationController = navigation
+        let coordinator = LoginCoordinator(with: self.configuration)
         coordinator.start()
+        self.configuration.keyWindow?.rootViewController = navigation
+    }
+
+    // Para uso no TabBarCoordinator
+    func rootViewController() -> UIViewController {
+        let viewModel = HelpViewModel(coordinator: self)
+        let controller = HelpViewController(viewModel: viewModel, coordinator: self, titleEmail: title)
+        return controller
     }
 }

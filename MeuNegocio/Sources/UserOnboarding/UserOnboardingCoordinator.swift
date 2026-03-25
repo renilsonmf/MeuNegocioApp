@@ -17,9 +17,17 @@ final class UserOnboardingCoordinator: BaseCoordinator {
         configuration.navigationController?.pushViewController(controller, animated: true)
     }
     
-    func navigateToHome() {
-        let coordinator = HomeCoordinator(with: configuration)
-        coordinator.start()
+//    func navigateToHome() {
+//        let coordinator = HomeCoordinator(with: configuration)
+//        coordinator.start()
+//        configuration.navigationController?.removeViewController(UserOnboardingViewController.self)
+//    }
+    
+    func navigateToMainTabBar() {
+        let mainTabBarCoordinator = MainTabBarCoordinator(with: configuration)
+        mainTabBarCoordinator.start()
         configuration.navigationController?.removeViewController(UserOnboardingViewController.self)
+        // Se quiser, armazene uma referência ao coordinator para manter o ciclo de vida
+        // self.childCoordinators.append(mainTabBarCoordinator)
     }
 }

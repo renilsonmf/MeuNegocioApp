@@ -193,7 +193,7 @@ extension ReportView: ViewCodeContract {
 
         /// Apply discount constraints
         applydiscountCardView
-            .topAnchor(in: containerView, padding: 30)
+            .topAnchor(in: containerView, padding: 16)
             .leftAnchor(in: containerView, padding: 15)
             .rightAnchor(in: containerView, padding: 15)
             .heightAnchor(50)

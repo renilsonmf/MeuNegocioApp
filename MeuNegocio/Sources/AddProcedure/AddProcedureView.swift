@@ -43,12 +43,6 @@ class AddProcedureView: MNView {
         $0.backgroundColor = .MNColors.yellowDark
         $0.selectRow(2, inComponent: 0, animated: true)
     }
-
-    private lazy var gripView = UIView() .. {
-        $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.backgroundColor = .lightGray
-        $0.roundCorners(cornerRadius: 2)
-    }
     
     private lazy var subTitleLabel: MNLabel = {
         let label = MNLabel(text: "Preencha todos os campos abaixo para \n adicionar um novo procedimento.",
@@ -201,6 +195,17 @@ class AddProcedureView: MNView {
         }
     }
     
+    func clearAllFields() {
+        nameTextField.text = ""
+        typeJobTextField.text = ""
+        paymentTextField.text = ""
+        valueTextField.text = ""
+        valueCosts = ""
+        costsView.customSwitch.setOn(false, animated: false)
+        costsView.customTextField.text = ""
+        costsView.customTextField.isHidden = true
+    }
+    
     // MARK: - Action Buttons
     @objc
     private func handleAddButton() {
@@ -238,7 +243,7 @@ class AddProcedureView: MNView {
 }
 extension AddProcedureView: ViewCodeContract {
     func setupHierarchy() {
-        addSubview(gripView)
+//        addSubview(gripView)
         addSubview(subTitleLabel)
         addSubview(containerStack)
         
@@ -253,14 +258,8 @@ extension AddProcedureView: ViewCodeContract {
     
     func setupConstraints() {
         
-        gripView
-            .topAnchor(in: self, padding: 10)
-            .centerX(in: self)
-            .heightAnchor(4)
-            .widthAnchor(34)
-        
         subTitleLabel
-            .topAnchor(in: self, padding: 60)
+            .topAnchor(in: self, padding: 16)
             .centerX(in: self)
         
         containerStack

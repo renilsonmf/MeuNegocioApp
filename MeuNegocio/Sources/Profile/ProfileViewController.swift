@@ -31,14 +31,31 @@ class ProfileViewController: CoordinatedViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Perfil"
         setUserData()
+        setupCloseButton()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+
     override func loadView() {
         super.loadView()
-        navigationController?.navigationBar.barTintColor = .MNColors.yellow
         self.view = customView
+    }
+
+    private func setupCloseButton() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "chevron.left"),
+            style: .plain,
+            target: self,
+            action: #selector(didTapClose)
+        )
+    }
+
+    @objc private func didTapClose() {
+        dismiss(animated: true)
     }
     
     private func setUserData() {
